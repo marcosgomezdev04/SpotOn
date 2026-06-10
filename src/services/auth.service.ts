@@ -50,7 +50,7 @@ export class AuthService {
             );
 
         if (!isValid) {
-            throw new Error("Invalid credentials");
+            throw new Error("Invalid password");
         }
 
         const token = jwt.sign(
