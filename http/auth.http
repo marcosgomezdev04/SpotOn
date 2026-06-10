@@ -1,0 +1,18 @@
+### Crear usuario
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{
+    "name": "pruebaautentica",
+    "email": "pruebadefinitivamente@gmail.com",
+    "password": "contra123"
+}
+
+### Iniciar sesion
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "marcos@example.com",
+    "password": "123456"
+}
