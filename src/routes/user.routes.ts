@@ -8,7 +8,6 @@ export class UserRoutes {
     constructor(
         private readonly userController: UserController
     ) {
-
         this.router = Router();
         this.initializeRoutes();
     }
@@ -33,6 +32,11 @@ export class UserRoutes {
         this.router.delete(
             "/users/:id",
             this.userController.deleteUser
+        );
+
+        this.router.put(
+            "/users/:id",
+            this.userController.updateUser
         );
     }
 }

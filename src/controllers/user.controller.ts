@@ -10,25 +10,17 @@ export class UserController {
     public createUser = async (req: Request, res: Response) => {
 
         try {
-            const user =
-                await this.userService.createUser(
-                    req.body
-                );
-
+            const user = await this.userService.createUser(req.body);
             res.status(201).json(user);
 
         } catch (error: any) {
-            res.status(400).json({
-                message: error.message
-            });
+            res.status(400).json({message: error.message});
         }
     };
 
     public getUsers = async (req: Request, res: Response) => {
 
-        const users =
-            await this.userService.getUsers();
-
+        const users = await this.userService.getUsers();
         res.status(200).json(users);
     };
 
@@ -64,5 +56,22 @@ export class UserController {
         res.status(200).json({
             message: "User deleted"
         });
+    };
+
+    public updateUser = async (req: Request, res: Response) => {
+
+        try {
+
+            const user = await this.userService.updateUser(req.params.id as string, req.body);
+
+            if (!user) {
+                return res.status(404).json({message: "User not found"});
+            }
+
+            res.status(200).json(user);
+
+        } catch (error: any) {
+            res.status(400).json({message: error.message});
+        }
     };
 }

@@ -3,8 +3,8 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-    "name": "Gomez",
-    "email": "marcos@gmail.com",
+    "name": "UsuarioGenerico",
+    "email": "Generico@gmail.com",
     "password": "123456"
 }
 
@@ -15,12 +15,12 @@ GET http://localhost:3000/api/users
 GET http://localhost:3000/api/users/6a253c4ecdddbbd74d30956c
 
 ### Actualizar usuario
-PUT http://localhost:3000/api/users/6a253c4ecdddbbd74d30956c
+PUT http://localhost:3000/api/users/6a2c9a2acba4cf99ef2f11fa
 Content-Type: application/json
 
 {
-    "name": "Gomez",
-    "email": "Gomez@gmail.com"
+    "name": "Usuario",
+    "email": "Usuario@gmail.com"
 }
 
 ### Eliminar usuario

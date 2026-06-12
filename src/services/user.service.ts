@@ -30,4 +30,11 @@ export class UserService {
     ): Promise<IUser | null> {
         return await this.userRepository.delete(id);
     }
+
+    public async updateUser(
+        id: string,
+        userData: Partial<IUser>
+    ): Promise<IUser | null> {
+        return await this.userRepository.update(id, userData);
+    }
 }
