@@ -12,7 +12,7 @@ export class App {
     constructor() {
 
         this.app = express(); //Para manejar peticiones HTTP
-        this.app.use(express.json());
+        this.app.use(express.json()); //Permite que express interprete automaticamente JSON
 
         const { userRoutes, authRoutes } = createDependencies();
 

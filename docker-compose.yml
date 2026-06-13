@@ -3,11 +3,9 @@ version: '3.8'
 services:
   app:
     build: .
-    # 1. Forzamos a Docker a usar el script de desarrollo
     command: npm run dev 
     ports:
       - "3000:3000"
-    # 2. Sincronizamos tu código local con el contenedor en tiempo real
     volumes:
       - .:/app
       - /app/node_modules
@@ -15,8 +13,7 @@ services:
       - mongo
     environment:
       - MONGO_URI=mongodb://mongo:27017/SpotOn
-      # 3. Pon una clave real aquí, no uses "process.env..." como texto
-      - JWT_SECRET=tu_clave_secreta_super_segura 
+      - JWT_SECRET=SpotOn_jwt_key
 
   mongo:
     image: mongo:8
