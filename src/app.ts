@@ -14,11 +14,16 @@ export class App {
         this.app = express(); //Para manejar peticiones HTTP
         this.app.use(express.json()); //Permite que express interprete automaticamente JSON
 
-        const { userRoutes, authRoutes } = createDependencies();
+        const { userRoutes, authRoutes, bookingRoutes } = createDependencies();
 
         this.app.use(
             "/api",
             userRoutes.router
+        );
+
+        this.app.use(
+            "/api",
+            bookingRoutes.router
         );
 
         this.app.use(

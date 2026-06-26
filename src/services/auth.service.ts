@@ -55,7 +55,8 @@ export class AuthService {
 
         const token = jwt.sign(
             {
-                email: user.email
+                email: user.email,
+                id: user._id!.toString()
             },
             process.env.JWT_SECRET!,
             {
