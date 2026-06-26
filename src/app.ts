@@ -1,8 +1,8 @@
 import express from "express";
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 import { createDependencies } from "./container";
 
-dotenv.config()
+dotenv.config();
 const PORT = process.env.PORT || 3001;
 
 export class App {
@@ -11,14 +11,24 @@ export class App {
 
     constructor() {
 
-        this.app = express(); //Para manejar peticiones HTTP
-        this.app.use(express.json()); //Permite que express interprete automaticamente JSON
+        this.app = express(); // Para manejar peticiones HTTP
+        this.app.use(express.json()); // Permite que Express interprete JSON
 
-        const { userRoutes, authRoutes, bookingRoutes } = createDependencies();
+        const {
+            userRoutes,
+            authRoutes,
+            scheduleRoutes,
+            bookingRoutes
+        } = createDependencies();
 
         this.app.use(
             "/api",
             userRoutes.router
+        );
+
+        this.app.use(
+            "/api",
+            scheduleRoutes.router
         );
 
         this.app.use(
