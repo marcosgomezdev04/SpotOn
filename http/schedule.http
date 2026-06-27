@@ -1,0 +1,29 @@
+### Crear schedule
+POST http://localhost:3000/schedule/post
+Content-Type: application/json
+
+{
+    "fieldName": "Cancha 1",
+    "date": "2026-06-28",
+    "startTime": "18:00",
+    "endTime": "19:00"
+}
+
+### Obtener todos los schedules
+GET http://localhost:3000/schedule/getAll
+
+### Obtener schedule por ID
+GET http://localhost:3000/schedule/getById/6a404fcf237899f33b43d752
+
+### Actualizar schedule
+PUT http://localhost:3000/schedule/update/685dc8b98b3b5e0c7b8d5678
+Content-Type: application/json
+
+{
+    "startTime": "19:00",
+    "endTime": "20:00",
+    "available": false
+}
+
+### Eliminar schedule
+DELETE http://localhost:3000/schedule/delete/685dc8b98b3b5e0c7b8d5678

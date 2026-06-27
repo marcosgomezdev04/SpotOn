@@ -3,9 +3,9 @@ POST http://localhost:3000/auth/register
 Content-Type: application/json
 
 {
-    "name": "lautaroespil",
-    "email": "espilcrespo@gmail.com",
-    "password": "contra123"
+    "name": "pruebaaplicaciones",
+    "email": "pruebaaplicaciones@gmail.com",
+    "password": "prueba12345"
 }
 
 ### Iniciar sesion
@@ -13,6 +13,6 @@ POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-    "email": "espilcrespo@gmail.com",
-    "password": "contra123"
+    "email": "pruebaaplicacion@gmail.com",
+    "password": "prueba12345"
 }

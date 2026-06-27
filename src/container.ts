@@ -10,6 +10,9 @@ import { BookingRepository } from "./repositories/booking.repository";
 import { BookingService } from "./services/booking.service";
 import { BookingController } from "./controllers/booking.controller";
 import { BookingRoutes } from "./routes/booking.routes";
+import { ScheduleService } from "./services/schedule.service";
+import { ScheduleController } from "./controllers/schedule.controller";
+import { ScheduleRoutes } from "./routes/schedule.routes";
 
 export function createDependencies() {
 
@@ -28,17 +31,29 @@ export function createDependencies() {
     const authRoutes = new AuthRoutes(authController);
 
     const scheduleRepository = new ScheduleRepository();
-    const bookingRepository = new BookingRepository();
-    const bookingService = new BookingService(
+
+    const scheduleService = new ScheduleService(scheduleRepository);
+
+    const scheduleController = new ScheduleController(scheduleService);
+
+    const scheduleRoutes = new ScheduleRoutes(scheduleController);
+
+    //const bookingRepository = new BookingRepository();
+
+    /*const bookingService = new BookingService(
         bookingRepository,
         scheduleRepository
     );
+
     const bookingController = new BookingController(bookingService);
     const bookingRoutes = new BookingRoutes(bookingController);
+
+    */
 
     return {
         userRoutes,
         authRoutes,
-        bookingRoutes,
+        scheduleRoutes,
+        //bookingRoutes
     };
 }

@@ -15,27 +15,27 @@ export class UserRoutes {
     private initializeRoutes(): void {
 
         this.router.post(
-            "/users",
+            "/post",
             this.userController.createUser
         );
 
         this.router.get(
-            "/users",
+            "/get",
             this.userController.getUsers
         );
 
         this.router.get(
-            "/users/:id",
+            "/getById/:id",
             this.userController.getUserById
         );
 
         this.router.delete(
-            "/users/:id",
+            "/delete/:id",
             this.userController.deleteUser
         );
 
         this.router.put(
-            "/users/:id",
+            "/update/:id",
             this.userController.updateUser
         );
     }

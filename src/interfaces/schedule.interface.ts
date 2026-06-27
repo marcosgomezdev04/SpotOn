@@ -1,9 +1,7 @@
 export interface ISchedule {
-    _id?: string;
+    id?: string;
+    fieldName: string;
     date: Date;
     startTime: string;
     endTime: string;
-    available: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
 }

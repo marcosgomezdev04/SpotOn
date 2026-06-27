@@ -3,25 +3,28 @@ import { ISchedule } from "../interfaces/schedule.interface";
 
 const ScheduleSchema = new Schema<ISchedule>(
     {
+        fieldName: {
+            type: String,
+            required: true
+        },
+
         date: {
             type: Date,
-            required: true,
+            required: true
         },
+
         startTime: {
             type: String,
-            required: true,
+            required: true
         },
+
         endTime: {
             type: String,
-            required: true,
-        },
-        available: {
-            type: Boolean,
-            default: true,
-        },
+            required: true
+        }
     },
     {
-        timestamps: true,
+        timestamps: true
     }
 );
 
