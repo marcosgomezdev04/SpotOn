@@ -10,9 +10,21 @@ export class ScheduleService {
     public async createSchedule(
         scheduleData: Partial<ISchedule>
     ): Promise<ISchedule> {
-        return await this.scheduleRepository.create(
-            scheduleData
-        );
+
+        if (
+            !scheduleData.fieldName ||
+            !scheduleData.date ||
+            !scheduleData.startTime ||
+            !scheduleData.endTime
+        ) {
+            throw new Error("All fields are required.");
+        }
+
+        if (scheduleData.startTime >= scheduleData.endTime) {
+            throw new Error("Start time must be before end time.");
+        }
+
+        return await this.scheduleRepository.create(scheduleData);
     }
 
     public async getSchedules(): Promise<ISchedule[]> {
@@ -22,12 +34,26 @@ export class ScheduleService {
     public async getScheduleById(
         id: string
     ): Promise<ISchedule | null> {
-        return await this.scheduleRepository.findById(id);
+
+        const schedule = await this.scheduleRepository.findById(id);
+
+        if (!schedule) {
+            throw new Error("Schedule not found.");
+        }
+
+        return schedule;
     }
 
     public async deleteSchedule(
         id: string
     ): Promise<ISchedule | null> {
+
+        const schedule = await this.scheduleRepository.findById(id);
+
+        if (!schedule) {
+            throw new Error("Schedule not found.");
+        }
+
         return await this.scheduleRepository.delete(id);
     }
 
@@ -35,9 +61,20 @@ export class ScheduleService {
         id: string,
         scheduleData: Partial<ISchedule>
     ): Promise<ISchedule | null> {
-        return await this.scheduleRepository.update(
-            id,
-            scheduleData
-        );
+
+        const schedule = await this.scheduleRepository.findById(id);
+
+        if (!schedule) {
+            throw new Error("Schedule not found.");
+        }
+
+        const startTime = scheduleData.startTime ?? schedule.startTime;
+        const endTime = scheduleData.endTime ?? schedule.endTime;
+
+        if (startTime >= endTime) {
+            throw new Error("Start time must be before end time.");
+        }
+
+        return await this.scheduleRepository.update(id, scheduleData);
     }
 }

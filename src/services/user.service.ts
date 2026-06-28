@@ -10,9 +10,16 @@ export class UserService {
     public async createUser(
         userData: Partial<IUser>
     ): Promise<IUser> {
-        return await this.userRepository.create(
-            userData
-        );
+
+        if (
+            !userData.name ||
+            !userData.email ||
+            !userData.password
+        ) {
+            throw new Error("All fields are required.");
+        }
+
+        return await this.userRepository.create(userData);
     }
 
     public async getUsers(): Promise<IUser[]> {
@@ -22,12 +29,26 @@ export class UserService {
     public async getUserById(
         id: string
     ): Promise<IUser | null> {
-        return await this.userRepository.findById(id);
+
+        const user = await this.userRepository.findById(id);
+
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+        return user;
     }
 
     public async deleteUser(
         id: string
     ): Promise<IUser | null> {
+
+        const user = await this.userRepository.findById(id);
+
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
         return await this.userRepository.delete(id);
     }
 
@@ -35,6 +56,25 @@ export class UserService {
         id: string,
         userData: Partial<IUser>
     ): Promise<IUser | null> {
+
+        const user = await this.userRepository.findById(id);
+
+        if (!user) {
+            throw new Error("User not found.");
+        }
+
+        if (userData.name !== undefined && userData.name.trim() === "") {
+            throw new Error("Name cannot be empty.");
+        }
+
+        if (userData.email !== undefined && userData.email.trim() === "") {
+            throw new Error("Email cannot be empty.");
+        }
+
+        if (userData.password !== undefined && userData.password.trim() === "") {
+            throw new Error("Password cannot be empty.");
+        }
+
         return await this.userRepository.update(id, userData);
     }
 }
