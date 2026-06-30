@@ -14,6 +14,19 @@ export class ScheduleRepository implements IScheduleRepository {
         return await ScheduleModel.find();
     }
 
+    public async findByFieldNameAndDate(
+        fieldName: string,
+        date: Date
+    ): Promise<ISchedule[]> {
+        const normalizedDate = new Date(date);
+        normalizedDate.setUTCHours(0, 0, 0, 0);
+
+        return await ScheduleModel.find({
+            fieldName,
+            date: normalizedDate
+        });
+    }
+
     public async findById(
         id: string
     ): Promise<ISchedule | null> {

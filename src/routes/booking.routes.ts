@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { BookingController } from "../controllers/booking.controller";
-import { authMiddleware } from "../middlewares/auth.middleware";
 
 export class BookingRoutes {
+
     public readonly router: Router;
 
     constructor(
@@ -13,16 +13,25 @@ export class BookingRoutes {
     }
 
     private initializeRoutes(): void {
+
         this.router.post(
-            "/bookings",
-            authMiddleware,
+            "/post",
             this.bookingController.createBooking
         );
 
+        this.router.get(
+            "/get",
+            this.bookingController.getAllBookings
+        );
+
+        this.router.get(
+            "/getById/:id",
+            this.bookingController.getBookingById
+        );
+
         this.router.delete(
-            "/bookings/:id",
-            authMiddleware,
-            this.bookingController.cancelBooking
+            "/delete/:id",
+            this.bookingController.deleteBooking
         );
     }
 }

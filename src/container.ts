@@ -26,29 +26,19 @@ export function createDependencies() {
     const authRoutes = new AuthRoutes(authController);
 
     const scheduleRepository = new ScheduleRepository();
-
     const scheduleService = new ScheduleService(scheduleRepository);
-
     const scheduleController = new ScheduleController(scheduleService);
-
     const scheduleRoutes = new ScheduleRoutes(scheduleController);
 
-    //const bookingRepository = new BookingRepository();
-
-    /*const bookingService = new BookingService(
-        bookingRepository,
-        scheduleRepository
-    );
-
+    const bookingRepository = new BookingRepository();
+    const bookingService = new BookingService(bookingRepository);
     const bookingController = new BookingController(bookingService);
     const bookingRoutes = new BookingRoutes(bookingController);
-
-    */
 
     return {
         userRoutes,
         authRoutes,
         scheduleRoutes,
-        //bookingRoutes
+        bookingRoutes
     };
 }

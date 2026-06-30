@@ -1,27 +1,31 @@
 import { Schema, model } from "mongoose";
 import { IBooking } from "../interfaces/booking.interface";
 
-const BookingSchema = new Schema<IBooking>(
+const bookingSchema = new Schema<IBooking>(
     {
+        userId: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+
         scheduleId: {
-            type: Schema.Types.ObjectId as any,
+            type: Schema.Types.ObjectId,
             ref: "Schedule",
             required: true,
+            unique: true
         },
-        userId: {
-            type: Schema.Types.ObjectId as any,
-            ref: "User",
-            required: true,
-        },
+        
         status: {
             type: String,
-            enum: ["active", "cancelled"],
-            default: "active",
-        },
+            required: true,
+            enum: ["PENDING", "CONFIRMED", "CANCELLED"],
+            default: "PENDING"
+        }
     },
     {
-        timestamps: true,
+        timestamps: true
     }
 );
 
-export const BookingModel = model<IBooking>("Booking", BookingSchema);
+export const BookingModel = model<IBooking>("Booking", bookingSchema);

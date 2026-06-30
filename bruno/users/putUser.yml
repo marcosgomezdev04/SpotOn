@@ -1,0 +1,25 @@
+info:
+  name: putUser
+  type: http
+
+http:
+  method: PUT
+  url: http://localhost:3000/user/update/6a296eedf4d25025a6b46472
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+          "name": "Test505",
+          "email": "Test505@gmail.com",
+          "password": "Test505"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

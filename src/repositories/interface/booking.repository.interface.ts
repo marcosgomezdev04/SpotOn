@@ -1,11 +1,19 @@
 import { IBooking } from "../../interfaces/booking.interface";
 
 export interface IBookingRepository {
-    create(bookingData: Partial<IBooking>): Promise<IBooking>;
+    
+    create(booking: IBooking): Promise<IBooking>;
+
+    findAll(): Promise<IBooking[]>;
+
     findById(id: string): Promise<IBooking | null>;
-    findActiveByScheduleId(scheduleId: string): Promise<IBooking | null>;
-    updateStatus(
+
+    findByUserId(userId: string): Promise<IBooking[]>;
+
+    update(
         id: string,
-        status: "active" | "cancelled"
+        userData: Partial<IBooking>
     ): Promise<IBooking | null>;
+
+    delete(id: string): Promise<IBooking | null>;
 }

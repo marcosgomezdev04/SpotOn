@@ -1,0 +1,14 @@
+info:
+  name: deleteUser
+  type: http
+
+http:
+  method: DELETE
+  url: http://localhost:3000/user/delete/6a3f044046a53ff317f28463
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

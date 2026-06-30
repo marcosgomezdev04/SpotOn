@@ -3,10 +3,15 @@ import { BookingModel } from "../models/booking.model";
 import { IBookingRepository } from "./interface/booking.repository.interface";
 
 export class BookingRepository implements IBookingRepository {
+
     public async create(
         bookingData: Partial<IBooking>
     ): Promise<IBooking> {
         return await BookingModel.create(bookingData);
+    }
+
+    public async findAll(): Promise<IBooking[]> {
+        return await BookingModel.find();
     }
 
     public async findById(
@@ -15,23 +20,28 @@ export class BookingRepository implements IBookingRepository {
         return await BookingModel.findById(id);
     }
 
-    public async findActiveByScheduleId(
-        scheduleId: string
-    ): Promise<IBooking | null> {
-        return await BookingModel.findOne({
-            scheduleId,
-            status: "active"
-        });
+    public async findByUserId(
+        userId: string
+    ): Promise<IBooking[]> {
+        return await BookingModel.find({ userId });
     }
 
-    public async updateStatus(
+    public async update(
         id: string,
-        status: "active" | "cancelled"
+        bookingData: Partial<IBooking>
     ): Promise<IBooking | null> {
         return await BookingModel.findByIdAndUpdate(
             id,
-            { status },
-            { new: true }
+            bookingData,
+            {
+                new: true
+            }
         );
+    }
+
+    public async delete(
+        id: string
+    ): Promise<IBooking | null> {
+        return await BookingModel.findByIdAndDelete(id);
     }
 }

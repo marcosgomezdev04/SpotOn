@@ -1,78 +1,29 @@
 import { IBooking } from "../interfaces/booking.interface";
 import { IBookingRepository } from "../repositories/interface/booking.repository.interface";
-import { IScheduleRepository } from "../repositories/interface/schedule.repository.interface";
 
 export class BookingService {
+
     constructor(
-        private readonly bookingRepository: IBookingRepository,
-        private readonly scheduleRepository: IScheduleRepository
+        private readonly bookingRepository: IBookingRepository
     ) {}
 
-    public async createBooking(
-        scheduleId: string,
-        userId: string
-    ): Promise<IBooking> {
-        const schedule = await this.scheduleRepository.findById(scheduleId);
-
-        if (!schedule) {
-            throw new Error("Schedule not found");
-        }
-
-        if (!schedule.available) {
-            throw new Error("Schedule is not available");
-        }
-
-        const existingBooking =
-            await this.bookingRepository.findActiveByScheduleId(
-                scheduleId
-            );
-
-        if (existingBooking) {
-            throw new Error("Schedule already has an active booking");
-        }
-
-        const booking = await this.bookingRepository.create({
-            scheduleId,
-            userId,
-            status: "active",
-        });
-
-        await this.scheduleRepository.update(scheduleId, {
-            available: false,
-        });
-
-        return booking;
+    public async create(bookingData: IBooking): Promise<IBooking> {
+        return await this.bookingRepository.create(bookingData);
     }
 
-    public async cancelBooking(
-        id: string,
-        userId: string
-    ): Promise<IBooking> {
-        const booking = await this.bookingRepository.findById(id);
+    public async getAll(): Promise<IBooking[]> {
+        return await this.bookingRepository.findAll();
+    }
 
-        if (!booking) {
-            throw new Error("Booking not found");
-        }
+    public async getById(id: string): Promise<IBooking | null> {
+        return await this.bookingRepository.findById(id);
+    }
 
-        if (booking.userId.toString() !== userId) {
-            throw new Error("Unauthorized");
-        }
+    public async getByUserId(userId: string): Promise<IBooking[]> {
+        return await this.bookingRepository.findByUserId(userId);
+    }
 
-        if (booking.status === "cancelled") {
-            throw new Error("Booking is already cancelled");
-        }
-
-        const cancelledBooking =
-            await this.bookingRepository.updateStatus(id, "cancelled");
-
-        await this.scheduleRepository.update(booking.scheduleId, {
-            available: true,
-        });
-
-        if (!cancelledBooking) {
-            throw new Error("Unable to cancel booking");
-        }
-
-        return cancelledBooking;
+    public async delete(id: string): Promise<IBooking | null> {
+        return await this.bookingRepository.delete(id);
     }
 }

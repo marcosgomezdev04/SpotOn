@@ -1,0 +1,26 @@
+info:
+  name: postSchedule
+  type: http
+
+http:
+  method: POST
+  url: http://localhost:3000/schedule/post
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+          "fieldName": "Cancha 1",
+          "date": "2026-06-28",
+          "startTime": "18:00",
+          "endTime": "19:00"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

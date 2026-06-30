@@ -6,6 +6,11 @@ export interface IScheduleRepository {
 
     findAll(): Promise<ISchedule[]>;
 
+    findByFieldNameAndDate(
+        fieldName: string,
+        date: Date
+    ): Promise<ISchedule[]>;
+
     findById(id: string): Promise<ISchedule | null>;
 
     update(

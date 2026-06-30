@@ -2,75 +2,60 @@ import { Request, Response } from "express";
 import { BookingService } from "../services/booking.service";
 
 export class BookingController {
+
     constructor(
         private readonly bookingService: BookingService
     ) {}
 
-    public createBooking = async (
-        req: Request,
-        res: Response
-    ) => {
+    public createBooking = async (req: Request, res: Response) => {
+
         try {
-            const userId = (req as any).user?.id as string;
-            const { scheduleId } = req.body;
-
-            if (!userId) {
-                return res.status(401).json({
-                    message: "Unauthorized",
-                });
-            }
-
-            if (!scheduleId) {
-                return res.status(400).json({
-                    message: "scheduleId is required",
-                });
-            }
-
-            const booking = await this.bookingService.createBooking(
-                scheduleId,
-                userId
-            );
-
+            const booking = await this.bookingService.create(req.body);
             res.status(201).json(booking);
+
         } catch (error: any) {
             res.status(400).json({
-                message: error.message,
+                message: error.message
             });
         }
     };
 
-    public cancelBooking = async (
-        req: Request,
-        res: Response
-    ) => {
+    public getAllBookings = async (_req: Request, res: Response) => {
+
         try {
-            const userId = (req as any).user?.id as string;
-            const bookingId = req.params.id as string;
+            const bookings = await this.bookingService.getAll();
+            res.status(200).json(bookings);
 
-            if (!userId) {
-                return res.status(401).json({
-                    message: "Unauthorized",
-                });
-            }
-
-            const booking = await this.bookingService.cancelBooking(
-                bookingId,
-                userId
-            );
-
-            res.status(200).json(booking);
         } catch (error: any) {
-            const message = error.message || "An error occurred";
+            res.status(400).json({
+                message: error.message
+            });
+        }
+    };
 
-            if (message === "Booking not found") {
-                return res.status(404).json({ message });
-            }
+    public getBookingById = async (req: Request, res: Response) => {
 
-            if (message === "Unauthorized") {
-                return res.status(403).json({ message });
-            }
+        try {
+            const booking = await this.bookingService.getById(req.params.id as string);
+            res.status(200).json(booking);
 
-            res.status(400).json({ message });
+        } catch (error: any) {
+            res.status(400).json({
+                message: error.message
+            });
+        }
+    };
+
+    public deleteBooking = async (req: Request, res: Response) => {
+
+        try {
+            const booking = await this.bookingService.delete(req.params.id as string);
+            res.status(200).json(booking);
+
+        } catch (error: any) {
+            res.status(400).json({
+                message: error.message
+            });
         }
     };
 }

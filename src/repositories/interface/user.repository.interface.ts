@@ -4,7 +4,7 @@ export interface IUserRepository {
     
     create(userData: Partial<IUser>): Promise<IUser>;
 
-    findAll(): Promise<IUser[]>; //Devuelve la coleccion de usuarios
+    findAll(): Promise<IUser[]>;
 
     findById(id: string): Promise<IUser | null>;
 
