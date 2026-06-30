@@ -1,104 +1,57 @@
 import { ISchedule } from "../interfaces/schedule.interface";
 import { IScheduleRepository } from "../repositories/interface/schedule.repository.interface";
 
-type ScheduleInput = Partial<ISchedule> & {
-    fieldName?: string;
-    date?: string | Date;
-    startTime?: string;
-    endTime?: string;
-};
-
 export class ScheduleService {
 
     constructor(
         private readonly scheduleRepository: IScheduleRepository
     ) {}
 
-    private parseMinutes(time: string, fieldName: string): number {
-        const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(time);
-
-        if (!match) {
-            throw new Error(`${fieldName} must use the HH:mm format.`);
-        }
-
-        return Number(match[1]) * 60 + Number(match[2]);
-    }
-
-    private normalizeDate(dateValue: string | Date): Date {
-        const date = new Date(dateValue);
-
-        if (Number.isNaN(date.getTime())) {
-            throw new Error("Invalid date.");
-        }
-
-        date.setUTCHours(0, 0, 0, 0);
-        return date;
-    }
-
-    private async ensureNoOverlap(
-        fieldName: string,
-        date: Date,
-        startMinutes: number,
-        endMinutes: number,
-        excludeScheduleId?: string
-    ): Promise<void> {
-        const schedules = await this.scheduleRepository.findByFieldNameAndDate(
-            fieldName,
-            date
-        );
-
-        for (const schedule of schedules) {
-            const scheduleId = schedule.id ?? (schedule as any)._id?.toString();
-
-            if (excludeScheduleId && scheduleId === excludeScheduleId) {
-                continue;
-            }
-
-            const overlaps =
-                startMinutes < schedule.endMinutes &&
-                schedule.startMinutes < endMinutes;
-
-            if (overlaps) {
-                throw new Error(
-                    "The requested schedule overlaps with an existing booking."
-                );
-            }
-        }
+    private parseTimeToMinutes(time: string): number {
+        const [hours, minutes] = time.split(":").map(Number);
+        return hours * 60 + minutes;
     }
 
     public async createSchedule(
-        scheduleData: ScheduleInput
+        scheduleData: Partial<ISchedule>
     ): Promise<ISchedule> {
-        
-        const { fieldName, date, startTime, endTime } = scheduleData;
 
-        if (!fieldName || !date || !startTime || !endTime) {
-            throw new Error(
-                "fieldName, date, startTime and endTime are required."
-            );
+        if (
+            !scheduleData.fieldName ||
+            !scheduleData.date ||
+            !scheduleData.startTime ||
+            !scheduleData.endTime
+        ) {
+            throw new Error("All fields are required.");
         }
 
-        const normalizedDate = this.normalizeDate(date);
-        const startMinutes = this.parseMinutes(startTime, "startTime");
-        const endMinutes = this.parseMinutes(endTime, "endTime");
+        const startMinutes = this.parseTimeToMinutes(scheduleData.startTime);
+        const endMinutes = this.parseTimeToMinutes(scheduleData.endTime);
 
-        if (endMinutes <= startMinutes) {
-            throw new Error("endTime must be later than startTime.");
+        if (startMinutes >= endMinutes) {
+            throw new Error("Start time must be before end time.");
         }
 
-        await this.ensureNoOverlap(
-            fieldName,
-            normalizedDate,
-            startMinutes,
-            endMinutes
+        const schedules = await this.scheduleRepository.findByFieldNameAndDate(
+            scheduleData.fieldName,
+            scheduleData.date
         );
 
-        return await this.scheduleRepository.create({
-            fieldName,
-            date: normalizedDate,
-            startMinutes,
-            endMinutes
-        });
+        for (const schedule of schedules) {
+
+            const existingStartMinutes = this.parseTimeToMinutes(schedule.startTime);
+            const existingEndMinutes = this.parseTimeToMinutes(schedule.endTime);
+
+            const overlaps =
+                startMinutes < existingEndMinutes &&
+                endMinutes > existingStartMinutes;
+
+            if (overlaps) {
+                throw new Error("This field is already reserved for that time.");
+            }
+        }
+
+        return await this.scheduleRepository.create(scheduleData);
     }
 
     public async getSchedules(): Promise<ISchedule[]> {
@@ -133,7 +86,7 @@ export class ScheduleService {
 
     public async updateSchedule(
         id: string,
-        scheduleData: ScheduleInput
+        scheduleData: Partial<ISchedule>
     ): Promise<ISchedule | null> {
 
         const schedule = await this.scheduleRepository.findById(id);
@@ -143,35 +96,51 @@ export class ScheduleService {
         }
 
         const fieldName = scheduleData.fieldName ?? schedule.fieldName;
-        const normalizedDate = scheduleData.date
-            ? this.normalizeDate(scheduleData.date)
-            : this.normalizeDate(schedule.date);
+        const date = scheduleData.date ?? schedule.date;
+        const startTime = scheduleData.startTime ?? schedule.startTime;
+        const endTime = scheduleData.endTime ?? schedule.endTime;
 
-        const startMinutes = scheduleData.startTime
-            ? this.parseMinutes(scheduleData.startTime, "startTime")
-            : scheduleData.startMinutes ?? schedule.startMinutes;
+        const startMinutes = this.parseTimeToMinutes(startTime);
+        const endMinutes = this.parseTimeToMinutes(endTime);
 
-        const endMinutes = scheduleData.endTime
-            ? this.parseMinutes(scheduleData.endTime, "endTime")
-            : scheduleData.endMinutes ?? schedule.endMinutes;
-
-        if (endMinutes <= startMinutes) {
-            throw new Error("endTime must be later than startTime.");
+        if (startMinutes >= endMinutes) {
+            throw new Error("Start time must be before end time.");
         }
 
-        await this.ensureNoOverlap(
+        const schedules = await this.scheduleRepository.findByFieldNameAndDate(
             fieldName,
-            normalizedDate,
-            startMinutes,
-            endMinutes,
-            id
+            date
         );
+
+        for (const existingSchedule of schedules) {
+
+            // Ignorar el horario que se está editando
+            if (existingSchedule.id?.toString() === id) {
+                continue;
+            }
+
+            const existingStartMinutes = this.parseTimeToMinutes(
+                existingSchedule.startTime
+            );
+
+            const existingEndMinutes = this.parseTimeToMinutes(
+                existingSchedule.endTime
+            );
+
+            const overlaps =
+                startMinutes < existingEndMinutes &&
+                endMinutes > existingStartMinutes;
+
+            if (overlaps) {
+                throw new Error("This field is already reserved for that time.");
+            }
+        }
 
         return await this.scheduleRepository.update(id, {
             fieldName,
-            date: normalizedDate,
-            startMinutes,
-            endMinutes
+            date,
+            startTime,
+            endTime
         });
     }
 }

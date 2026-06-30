@@ -18,12 +18,9 @@ export class ScheduleRepository implements IScheduleRepository {
         fieldName: string,
         date: Date
     ): Promise<ISchedule[]> {
-        const normalizedDate = new Date(date);
-        normalizedDate.setUTCHours(0, 0, 0, 0);
-
         return await ScheduleModel.find({
             fieldName,
-            date: normalizedDate
+            date
         });
     }
 

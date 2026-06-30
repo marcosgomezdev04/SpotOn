@@ -13,7 +13,8 @@ export class AuthController {
             await this.authService.register(
                 req.body.name,
                 req.body.email,
-                req.body.password
+                req.body.password,
+                req.body.role
             );
 
         res.status(201).json(user);

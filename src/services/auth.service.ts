@@ -11,7 +11,8 @@ export class AuthService {
     public async register(
         name: string,
         email: string,
-        password: string
+        password: string,
+        role: "USER" | "ADMIN" = "USER"
     ) {
 
         const existingUser =
@@ -27,7 +28,8 @@ export class AuthService {
         return await this.userRepository.create({
             name,
             email,
-            password: hashedPassword //Password hasheada
+            password: hashedPassword,
+            role
         });
     }
 
@@ -56,14 +58,15 @@ export class AuthService {
         const token = jwt.sign(
             {
                 email: user.email,
-                id: user._id!.toString()
+                id: user._id!.toString(),
+                role: user.role ?? "USER"
             },
             process.env.JWT_SECRET!,
             {
-                expiresIn: "1d" //Token expira en 1 dia
+                expiresIn: "1d"
             }
         );
 
-        return {token};
+        return { token };
     }
 }

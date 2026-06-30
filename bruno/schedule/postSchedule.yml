@@ -1,6 +1,7 @@
 info:
   name: postSchedule
   type: http
+  seq: 1
 
 http:
   method: POST
@@ -17,7 +18,9 @@ http:
           "startTime": "18:00",
           "endTime": "19:00"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgyODU4NTQ3LCJleHAiOjE3ODI5NDQ5NDd9.QBjVXuoWUP62-QKOmjml4_dglWJAqLB0T-GFdYRpf_g
 
 settings:
   encodeUrl: true

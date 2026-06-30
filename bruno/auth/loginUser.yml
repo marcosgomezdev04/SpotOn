@@ -1,6 +1,7 @@
 info:
   name: loginUser
   type: http
+  seq: 1
 
 http:
   method: POST
@@ -12,13 +13,16 @@ http:
     type: json
     data: |-
       {
-          "email": "prueba@gmail.com",
-          "password": "prueba12345"
+          "email": "Testo404@gmail.com",
+          "password": "Test404"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: 6a442cea4d9ea48a919ca956
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+​

@@ -1,11 +1,14 @@
 info:
   name: deleteUser
   type: http
+  seq: 1
 
 http:
   method: DELETE
-  url: http://localhost:3000/user/delete/6a3f044046a53ff317f28463
-  auth: inherit
+  url: http://localhost:3000/user/delete/6a442cea4d9ea48a919ca956
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RvNDA0QGdtYWlsLmNvbSIsImlkIjoiNmE0NDJjZWE0ZDllYTQ4YTkxOWNhOTU2Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODI4NTI4ODksImV4cCI6MTc4MjkzOTI4OX0.71cSlqme-nv4fox50rcL_aB5cPL0jf1wZbx87qZD5cw
 
 settings:
   encodeUrl: true

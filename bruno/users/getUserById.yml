@@ -1,14 +1,17 @@
 info:
   name: getUserById
   type: http
+  seq: 1
 
 http:
   method: GET
-  url: http://localhost:3000/user/getById/6a296eedf4d25025a6b46472
+  url: http://localhost:3000/user/getById/6a442cc04d9ea48a919ca955
   headers:
     - name: Content-Type
       value: application/json
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RvNDA0QGdtYWlsLmNvbSIsImlkIjoiNmE0NDJjZWE0ZDllYTQ4YTkxOWNhOTU2Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODI4NTI4ODksImV4cCI6MTc4MjkzOTI4OX0.71cSlqme-nv4fox50rcL_aB5cPL0jf1wZbx87qZD5cw
 
 settings:
   encodeUrl: true

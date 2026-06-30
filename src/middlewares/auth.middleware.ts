@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
+interface JwtUserPayload {
+    id: string;
+    email: string;
+    role: string;
+}
+
 export const authMiddleware = (
     req: Request,
     res: Response,
@@ -19,14 +25,8 @@ export const authMiddleware = (
     const token = authHeader.replace("Bearer ", "");
 
     try {
-        const payload =
-            jwt.verify(
-                token,
-                process.env.JWT_SECRET!
-            );
-
+        const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtUserPayload;
         (req as any).user = payload;
-
         next();
 
     } catch {
@@ -34,4 +34,42 @@ export const authMiddleware = (
             message: "Invalid token"
         });
     }
+};
+
+export const requireAdmin = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void => {
+
+    const currentUser = (req as any).user;
+
+    if (!currentUser || currentUser.role !== "ADMIN") {
+        res.status(403).json({ message: "Forbidden" });
+        return;
+    }
+
+    next();
+};
+
+export const requireOwner = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void => {
+    
+    const currentUser = (req as any).user;
+    const targetId = req.params.id;
+
+    if (!currentUser) {
+        res.status(401).json({ message: "Token not provided" });
+        return;
+    }
+
+    if (currentUser.role === "ADMIN" || currentUser.id === targetId) {
+        next();
+        return;
+    }
+
+    res.status(403).json({ message: "Forbidden" });
 };

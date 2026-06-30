@@ -1,6 +1,7 @@
 info:
   name: getAllSchedule
   type: http
+  seq: 1
 
 http:
   method: GET
@@ -8,7 +9,9 @@ http:
   body:
     type: json
     data: ""
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6QGdtYWlsLmNvbSIsImlkIjoiNmE0MzYxNDYwYWFhN2ZlODJkNTk5MDRmIiwiaWF0IjoxNzgyODAwNzQzLCJleHAiOjE3ODI4ODcxNDN9.gvVzUv6NkPfh2ZHSSatEWvp3DfFlvRDsvNB3ekH0IJI
 
 settings:
   encodeUrl: true

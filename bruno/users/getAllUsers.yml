@@ -5,10 +5,9 @@ info:
 http:
   method: GET
   url: http://localhost:3000/user/get
-  headers:
-    - name: Content-Type
-      value: application/json
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgyODUxNjYyLCJleHAiOjE3ODI5MzgwNjJ9.pUxrxLg9cAsD14068D--JiXq-XRDHBOTUZvTxVrcoso
 
 settings:
   encodeUrl: true

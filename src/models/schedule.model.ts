@@ -20,13 +20,13 @@ const ScheduleSchema = new Schema<ISchedule>(
             required: true
         },
 
-        startMinutes: {
-            type: Number,
+        startTime: {
+            type: String,
             required: true
         },
 
-        endMinutes: {
-            type: Number,
+        endTime: {
+            type: String,
             required: true
         }
     },
@@ -39,8 +39,8 @@ ScheduleSchema.index(
     {
         fieldName: 1,
         date: 1,
-        startMinutes: 1,
-        endMinutes: 1
+        startTime: 1,
+        endTime: 1
     },
     {
         unique: true
