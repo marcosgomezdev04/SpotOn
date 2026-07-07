@@ -1,14 +1,15 @@
 info:
-  name: getAllSchedule
+  name: getScheduleById
   type: http
   seq: 1
 
 http:
   method: GET
-  url: http://localhost:3000/schedule/getAll
-  body:
-    type: json
-    data: ""
+  url: http://localhost:3000/schedule/getById/:id
+  params:
+    - name: id
+      value: 6a4ca8fcb3818bb8d0cb52af
+      type: path
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDA3NzA2LCJleHAiOjE3ODM0OTQxMDZ9.RA1xTFQA9r2Z6M3WsYUoVJDhf2xrUczKZY-PljdiZUA

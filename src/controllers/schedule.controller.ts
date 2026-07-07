@@ -11,9 +11,10 @@ export class ScheduleController {
 
         try {
             const schedule =
-                await this.scheduleService.createSchedule(
-                    req.body
-                );
+                await this.scheduleService.createSchedule({
+                    ...req.body,
+                    userId: (req as any).userId
+                });
             res.status(201).json(schedule);
 
         } catch (error: any) {

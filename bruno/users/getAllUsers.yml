@@ -1,13 +1,14 @@
 info:
   name: getAllUsers
   type: http
+  seq: 1
 
 http:
   method: GET
-  url: http://localhost:3000/user/get
+  url: http://localhost:3000/user/getAll
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgyODUxNjYyLCJleHAiOjE3ODI5MzgwNjJ9.pUxrxLg9cAsD14068D--JiXq-XRDHBOTUZvTxVrcoso
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDA3NzA2LCJleHAiOjE3ODM0OTQxMDZ9.RA1xTFQA9r2Z6M3WsYUoVJDhf2xrUczKZY-PljdiZUA
 
 settings:
   encodeUrl: true

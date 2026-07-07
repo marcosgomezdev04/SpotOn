@@ -8,7 +8,7 @@ http:
   url: http://localhost:3000/user/delete/6a442cea4d9ea48a919ca956
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RvNDA0QGdtYWlsLmNvbSIsImlkIjoiNmE0NDJjZWE0ZDllYTQ4YTkxOWNhOTU2Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODI4NTI4ODksImV4cCI6MTc4MjkzOTI4OX0.71cSlqme-nv4fox50rcL_aB5cPL0jf1wZbx87qZD5cw
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDA3NzA2LCJleHAiOjE3ODM0OTQxMDZ9.RA1xTFQA9r2Z6M3WsYUoVJDhf2xrUczKZY-PljdiZUA
 
 settings:
   encodeUrl: true

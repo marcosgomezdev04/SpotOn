@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { ScheduleModel } from "../models/schedule.model";
 
 interface JwtUserPayload {
     id: string;
@@ -27,6 +28,7 @@ export const authMiddleware = (
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtUserPayload;
         (req as any).user = payload;
+        (req as any).userId = payload.id;
         next();
 
     } catch {
@@ -44,7 +46,12 @@ export const requireAdmin = (
 
     const currentUser = (req as any).user;
 
-    if (!currentUser || currentUser.role !== "ADMIN") {
+    if (!currentUser) {
+        res.status(401).json({ message: "Token not provided" });
+        return;
+    }
+
+    if (currentUser.role !== "ADMIN") {
         res.status(403).json({ message: "Forbidden" });
         return;
     }
@@ -52,12 +59,12 @@ export const requireAdmin = (
     next();
 };
 
-export const requireOwner = (
+export const requireOwnerOrAdmin = (
     req: Request,
     res: Response,
     next: NextFunction
 ): void => {
-    
+
     const currentUser = (req as any).user;
     const targetId = req.params.id;
 
@@ -66,10 +73,54 @@ export const requireOwner = (
         return;
     }
 
-    if (currentUser.role === "ADMIN" || currentUser.id === targetId) {
+    if (currentUser.role === "ADMIN") {
+        next();
+        return;
+    }
+
+    if (!targetId || currentUser.id === targetId) {
         next();
         return;
     }
 
     res.status(403).json({ message: "Forbidden" });
+};
+
+export const authorizeScheduleAccess = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+
+    const currentUser = (req as any).user;
+    const scheduleId = req.params.id;
+
+    if (!currentUser) {
+        res.status(401).json({ message: "Token not provided" });
+        return;
+    }
+
+    if (currentUser.role === "ADMIN") {
+        next();
+        return;
+    }
+
+    try {
+        const schedule = await ScheduleModel.findById(scheduleId);
+
+        if (!schedule) {
+            res.status(404).json({ message: "Schedule not found" });
+            return;
+        }
+
+        if (schedule.userId?.toString() !== currentUser.id) {
+            res.status(403).json({ message: "Forbidden" });
+            return;
+        }
+
+        next();
+
+    } catch {
+        res.status(500).json({ message: "Error validating schedule access" });
+    }
 };

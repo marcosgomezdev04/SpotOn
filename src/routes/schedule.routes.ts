@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ScheduleController } from "../controllers/schedule.controller";
-import { authMiddleware } from "../middlewares/auth.middleware";
+import { authMiddleware, authorizeScheduleAccess, requireAdmin } from "../middlewares/auth.middleware";
 
 export class ScheduleRoutes {
 
@@ -24,24 +24,28 @@ export class ScheduleRoutes {
         this.router.get(
             "/getAll",
             authMiddleware,
+            requireAdmin,
             this.scheduleController.getSchedules
         );
 
         this.router.get(
             "/getById/:id",
             authMiddleware,
+            authorizeScheduleAccess,
             this.scheduleController.getScheduleById
         );
 
         this.router.delete(
             "/delete/:id",
             authMiddleware,
+            authorizeScheduleAccess,
             this.scheduleController.deleteSchedule
         );
 
         this.router.put(
             "/update/:id",
             authMiddleware,
+            authorizeScheduleAccess,
             this.scheduleController.updateSchedule
         );
     }

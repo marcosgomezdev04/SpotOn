@@ -8,11 +8,11 @@ http:
   url: http://localhost:3000/schedule/delete/:id
   params:
     - name: id
-      value: 6a435c39693dbdabf8614c3f
+      value: 6a4ca8fcb3818bb8d0cb52af
       type: path
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgyODU4NTQ3LCJleHAiOjE3ODI5NDQ5NDd9.QBjVXuoWUP62-QKOmjml4_dglWJAqLB0T-GFdYRpf_g
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RvNDA0QGdtYWlsLmNvbSIsImlkIjoiNmE0Y2E3ZjJiMzgxOGJiOGQwY2I1MmFlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODM0MDg2NzEsImV4cCI6MTc4MzQ5NTA3MX0.LE74qg7MN1lc4Uj-XDOL-6wjhW4aVbb9XB1b-aCh5y8
 
 settings:
   encodeUrl: true

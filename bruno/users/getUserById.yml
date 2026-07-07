@@ -5,13 +5,13 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/user/getById/6a442cc04d9ea48a919ca955
+  url: http://localhost:3000/user/getById/6a4ca7f2b3818bb8d0cb52ae
   headers:
     - name: Content-Type
       value: application/json
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RvNDA0QGdtYWlsLmNvbSIsImlkIjoiNmE0NDJjZWE0ZDllYTQ4YTkxOWNhOTU2Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODI4NTI4ODksImV4cCI6MTc4MjkzOTI4OX0.71cSlqme-nv4fox50rcL_aB5cPL0jf1wZbx87qZD5cw
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RvNDA0QGdtYWlsLmNvbSIsImlkIjoiNmE0Y2E3ZjJiMzgxOGJiOGQwY2I1MmFlIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3ODM0MDg2NzEsImV4cCI6MTc4MzQ5NTA3MX0.LE74qg7MN1lc4Uj-XDOL-6wjhW4aVbb9XB1b-aCh5y8
 
 settings:
   encodeUrl: true

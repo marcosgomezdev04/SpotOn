@@ -6,6 +6,8 @@ export interface IScheduleRepository {
 
     findAll(): Promise<ISchedule[]>;
 
+    findByUserId(userId: string): Promise<ISchedule[]>;
+
     findByFieldNameAndDate(
         fieldName: string,
         date: Date

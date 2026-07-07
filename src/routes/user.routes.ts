@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller";
-import { authMiddleware, requireAdmin } from "../middlewares/auth.middleware";
+import { authMiddleware, requireAdmin, requireOwnerOrAdmin } from "../middlewares/auth.middleware";
 
 export class UserRoutes {
 
@@ -15,13 +15,8 @@ export class UserRoutes {
 
     private initializeRoutes(): void {
 
-        this.router.post(
-            "/post",
-            this.userController.createUser
-        );
-
         this.router.get(
-            "/get",
+            "/getAll",
             authMiddleware,
             requireAdmin,
             this.userController.getUsers
@@ -30,19 +25,21 @@ export class UserRoutes {
         this.router.get(
             "/getById/:id",
             authMiddleware,
+            requireOwnerOrAdmin,
             this.userController.getUserById
         );
 
         this.router.delete(
             "/delete/:id",
             authMiddleware,
-            requireAdmin,
+            requireOwnerOrAdmin,
             this.userController.deleteUser
         );
 
         this.router.put(
             "/update/:id",
             authMiddleware,
+            requireOwnerOrAdmin,
             this.userController.updateUser
         );
     }

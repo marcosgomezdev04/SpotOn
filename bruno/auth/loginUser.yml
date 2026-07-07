@@ -6,9 +6,6 @@ info:
 http:
   method: POST
   url: http://localhost:3000/auth/login
-  headers:
-    - name: Content-Type
-      value: application/json
   body:
     type: json
     data: |-
@@ -16,13 +13,10 @@ http:
           "email": "Testo404@gmail.com",
           "password": "Test404"
       }
-  auth:
-    type: bearer
-    token: 6a442cea4d9ea48a919ca956
+  auth: inherit
 
 settings:
   encodeUrl: true
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-​
