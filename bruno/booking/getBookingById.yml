@@ -1,14 +1,13 @@
 info:
-  name: deleteSchedule
+  name: getBookingById
   type: http
-  seq: 1
 
 http:
-  method: DELETE
-  url: http://localhost:3000/schedule/delete/:id
+  method: GET
+  url: http://localhost:3000/booking/getById/:id
   params:
     - name: id
-      value: 6a4ca493b2bd5816c0b905c6
+      value: 6a4dc5ab24c17bf35cc9037c
       type: path
   auth:
     type: bearer

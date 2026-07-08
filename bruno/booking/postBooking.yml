@@ -1,15 +1,17 @@
 info:
-  name: deleteSchedule
+  name: postBooking
   type: http
-  seq: 1
 
 http:
-  method: DELETE
-  url: http://localhost:3000/schedule/delete/:id
-  params:
-    - name: id
-      value: 6a4ca493b2bd5816c0b905c6
-      type: path
+  method: POST
+  url: http://localhost:3000/booking/post
+  body:
+    type: json
+    data: |-
+      {
+          "userId": "6a4367c0d1ea05b2560419f2",
+          "scheduleId": "6a4dc3ca8150f52e4695c576"
+      }
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDcxODQ1LCJleHAiOjE3ODM1NTgyNDV9.xmquJ5hKZE_vOApDGdiUENHzNE5KygrxqmP5SQpKRc8

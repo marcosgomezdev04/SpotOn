@@ -14,7 +14,7 @@ export class App {
         this.app = express(); // Para manejar peticiones HTTP
         this.app.use(express.json()); // Permite que Express interprete JSON
 
-        const { userRoutes, authRoutes, scheduleRoutes, /*bookingRoutes*/} = createDependencies();
+        const { userRoutes, authRoutes, scheduleRoutes, bookingRoutes } = createDependencies();
 
         this.app.use(
             "/user",
@@ -31,11 +31,10 @@ export class App {
             scheduleRoutes.router
         );
 
-        /*this.app.use(
+        this.app.use(
             "/booking",
             bookingRoutes.router
         );
-        */
     }
 
     public start(): void {

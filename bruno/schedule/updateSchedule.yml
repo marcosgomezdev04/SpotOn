@@ -1,15 +1,23 @@
 info:
-  name: deleteSchedule
+  name: updateSchedule
   type: http
-  seq: 1
 
 http:
-  method: DELETE
-  url: http://localhost:3000/schedule/delete/:id
+  method: PUT
+  url: http://localhost:3000/schedule/update/:id
   params:
     - name: id
-      value: 6a4ca493b2bd5816c0b905c6
+      value: 6a4d9fa1ed9ad7d24497f186
       type: path
+  body:
+    type: json
+    data: |-
+      {
+          "fieldName": "Cancha 2",
+          "date": "2026-07-30",
+          "startTime": "14:00",
+          "endTime": "15:30"
+      }
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDcxODQ1LCJleHAiOjE3ODM1NTgyNDV9.xmquJ5hKZE_vOApDGdiUENHzNE5KygrxqmP5SQpKRc8
