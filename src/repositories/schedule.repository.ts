@@ -14,10 +14,6 @@ export class ScheduleRepository implements IScheduleRepository {
         return await ScheduleModel.find();
     }
 
-    public async findByUserId(userId: string): Promise<ISchedule[]> {
-        return await ScheduleModel.find({ userId });
-    }
-
     public async findByFieldNameAndDate(
         fieldName: string,
         date: Date

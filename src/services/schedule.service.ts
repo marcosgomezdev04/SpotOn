@@ -20,8 +20,7 @@ export class ScheduleService {
             !scheduleData.fieldName ||
             !scheduleData.date ||
             !scheduleData.startTime ||
-            !scheduleData.endTime ||
-            !scheduleData.userId
+            !scheduleData.endTime
         ) {
             throw new Error("All fields are required.");
         }
@@ -57,10 +56,6 @@ export class ScheduleService {
 
     public async getSchedules(): Promise<ISchedule[]> {
         return await this.scheduleRepository.findAll();
-    }
-
-    public async getSchedulesByUserId(userId: string): Promise<ISchedule[]> {
-        return await this.scheduleRepository.findByUserId(userId);
     }
 
     public async getScheduleById(

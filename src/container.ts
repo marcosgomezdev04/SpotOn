@@ -9,10 +9,12 @@ import { ScheduleRepository } from "./repositories/schedule.repository";
 import { ScheduleService } from "./services/schedule.service";
 import { ScheduleController } from "./controllers/schedule.controller";
 import { ScheduleRoutes } from "./routes/schedule.routes";
+/*
 import { BookingRepository } from "./repositories/booking.repository";
 import { BookingService } from "./services/booking.service";
 import { BookingController } from "./controllers/booking.controller";
 import { BookingRoutes } from "./routes/booking.routes";
+*/
 
 export function createDependencies() {
 
@@ -30,15 +32,17 @@ export function createDependencies() {
     const scheduleController = new ScheduleController(scheduleService);
     const scheduleRoutes = new ScheduleRoutes(scheduleController);
 
+    /*
     const bookingRepository = new BookingRepository();
     const bookingService = new BookingService(bookingRepository);
     const bookingController = new BookingController(bookingService);
     const bookingRoutes = new BookingRoutes(bookingController);
+    */
 
     return {
         userRoutes,
         authRoutes,
         scheduleRoutes,
-        bookingRoutes
+        //bookingRoutes
     };
 }

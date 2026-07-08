@@ -6,5 +6,4 @@ export interface ISchedule {
     date: Date;
     startTime: string;
     endTime: string;
-    userId: Types.ObjectId;
 }
