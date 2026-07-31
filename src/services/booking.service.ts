@@ -71,7 +71,25 @@ export class BookingService {
 
         return await this.bookingRepository.findByUserId(userId);
     }
+    
+    public async updateBooking(
+    id: string,
+    bookingData: Partial<IBooking>
+    ): Promise<IBooking | null> {
 
+    const booking = await this.bookingRepository.findById(id);
+
+    if (!booking) {
+        throw new Error("Booking not found.");
+    }
+
+    return await this.bookingRepository.update(
+        id,
+        bookingData
+    );
+   } 
+   
+   
     public async deleteBooking(
         id: string
     ): Promise<IBooking | null> {
