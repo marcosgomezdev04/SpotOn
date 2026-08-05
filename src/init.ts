@@ -1,28 +1,34 @@
 import { App } from './app';
 import { MongoDB } from './database/mongodb';
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 import { UserModel } from './models/user.model';
 import bcrypt from 'bcrypt';
 
-dotenv.config()
+dotenv.config();
 
 async function bootstrap() {
     await MongoDB.connect();
 
-    const existingAdmin = await UserModel.findOne({ email: 'marcosgomez100704@gmail.com' });
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
-    if (!existingAdmin) {
+    if (adminEmail && adminPassword) {
+        const existingAdmin = await UserModel.findOne({ email: adminEmail });
 
-        const hashedPassword = await bcrypt.hash('admin123', 10);
+        if (!existingAdmin) {
+            const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-        await UserModel.create({
-            name: 'marcos',
-            email: 'marcosgomez100704@gmail.com',
-            password: hashedPassword,
-            role: 'ADMIN'
-        });
+            await UserModel.create({
+                name: 'admin',
+                email: adminEmail,
+                password: hashedPassword,
+                role: 'ADMIN'
+            });
 
-        console.log('Admin user created');
+            console.log('Admin user created from environment variables');
+        }
+    } else {
+        console.log('No default admin configured. Set ADMIN_EMAIL and ADMIN_PASSWORD to create one automatically.');
     }
 
     const app = new App();

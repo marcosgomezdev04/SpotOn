@@ -32,7 +32,10 @@ export function createDependencies() {
     const scheduleRoutes = new ScheduleRoutes(scheduleController);
 
     const bookingRepository = new BookingRepository();
-    const bookingService = new BookingService(bookingRepository);
+    const bookingService = new BookingService(
+        bookingRepository,
+        scheduleRepository
+    );
     const bookingController = new BookingController(bookingService);
     const bookingRoutes = new BookingRoutes(bookingController);
 

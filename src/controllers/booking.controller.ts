@@ -4,7 +4,7 @@ import { BookingService } from "../services/booking.service";
 export class BookingController {
 
     constructor(
-        private bookingService = new BookingService()
+        private readonly bookingService: BookingService
     ) {}
 
     public createBooking = async (req: Request, res: Response) => {

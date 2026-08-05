@@ -1,12 +1,12 @@
 import { IBooking } from "../interfaces/booking.interface";
-import { BookingRepository } from "../repositories/booking.repository";
-import { ScheduleRepository } from "../repositories/schedule.repository";
+import { IBookingRepository } from "../repositories/interface/booking.repository.interface";
+import { IScheduleRepository } from "../repositories/interface/schedule.repository.interface";
 
 export class BookingService {
 
     constructor(
-        private bookingRepository = new BookingRepository(),
-        private scheduleRepository = new ScheduleRepository()
+        private readonly bookingRepository: IBookingRepository,
+        private readonly scheduleRepository: IScheduleRepository
     ) {}
 
     public async createBooking(
@@ -21,9 +21,9 @@ export class BookingService {
             throw new Error("Schedule is required.");
         }
 
-        const schedule = await this.scheduleRepository.findById(
-            bookingData.scheduleId.toString()
-        );
+        const scheduleId = bookingData.scheduleId.toString();
+
+        const schedule = await this.scheduleRepository.findById(scheduleId);
 
         if (!schedule) {
             throw new Error("Schedule not found.");
@@ -33,12 +33,25 @@ export class BookingService {
             throw new Error("This schedule is already booked.");
         }
 
-        const booking = await this.bookingRepository.create(
-            bookingData
+        const existingBooking = await this.bookingRepository.findByUserId(
+            bookingData.userId.toString()
         );
 
+        const alreadyBooked = existingBooking.some(
+            (booking) => booking.scheduleId.toString() === scheduleId
+        );
+
+        if (alreadyBooked) {
+            throw new Error("You already have a booking for this schedule.");
+        }
+
+        const booking = await this.bookingRepository.create({
+            ...bookingData,
+            status: "CONFIRMED"
+        });
+
         await this.scheduleRepository.update(
-            bookingData.scheduleId.toString(),
+            scheduleId,
             {
                 status: "BOOKED"
             }
@@ -48,7 +61,6 @@ export class BookingService {
     }
 
     public async getAllBookings(): Promise<IBooking[]> {
-
         return await this.bookingRepository.findAll();
     }
 
@@ -68,28 +80,34 @@ export class BookingService {
     public async getBookingsByUserId(
         userId: string
     ): Promise<IBooking[]> {
-
         return await this.bookingRepository.findByUserId(userId);
     }
-    
+
     public async updateBooking(
-    id: string,
-    bookingData: Partial<IBooking>
+        id: string,
+        bookingData: Partial<IBooking>
     ): Promise<IBooking | null> {
 
-    const booking = await this.bookingRepository.findById(id);
+        const booking = await this.bookingRepository.findById(id);
 
-    if (!booking) {
-        throw new Error("Booking not found.");
+        if (!booking) {
+            throw new Error("Booking not found.");
+        }
+
+        if (bookingData.userId && bookingData.userId.toString() !== booking.userId.toString()) {
+            throw new Error("You cannot change the user of a booking.");
+        }
+
+        if (bookingData.scheduleId && bookingData.scheduleId.toString() !== booking.scheduleId.toString()) {
+            throw new Error("You cannot change the schedule of a booking.");
+        }
+
+        return await this.bookingRepository.update(
+            id,
+            bookingData
+        );
     }
 
-    return await this.bookingRepository.update(
-        id,
-        bookingData
-    );
-   } 
-   
-   
     public async deleteBooking(
         id: string
     ): Promise<IBooking | null> {
@@ -98,6 +116,10 @@ export class BookingService {
 
         if (!booking) {
             throw new Error("Booking not found.");
+        }
+
+        if (booking.status === "CANCELLED") {
+            throw new Error("This booking is already cancelled.");
         }
 
         const updatedBooking = await this.bookingRepository.update(

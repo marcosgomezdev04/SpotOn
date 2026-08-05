@@ -2,7 +2,8 @@ import { Router } from "express";
 import { BookingController } from "../controllers/booking.controller";
 import {
     authMiddleware,
-    requireAdmin
+    requireAdmin,
+    requireBookingOwnerOrAdmin
 } from "../middlewares/auth.middleware";
 
 export class BookingRoutes {
@@ -27,12 +28,14 @@ export class BookingRoutes {
         this.router.get(
             "/getAll",
             authMiddleware,
+            requireAdmin,
             this.bookingController.getAllBookings
         );
 
         this.router.get(
             "/getById/:id",
             authMiddleware,
+            requireBookingOwnerOrAdmin,
             this.bookingController.getBookingById
         );
 
@@ -45,12 +48,14 @@ export class BookingRoutes {
         this.router.put(
             "/update/:id",
             authMiddleware,
+            requireBookingOwnerOrAdmin,
             this.bookingController.updateBooking
         );
 
         this.router.delete(
             "/delete/:id",
             authMiddleware,
+            requireBookingOwnerOrAdmin,
             this.bookingController.deleteBooking
         );
     }

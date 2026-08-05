@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { ScheduleModel } from "../models/schedule.model";
+import { BookingModel } from "../models/booking.model";
 
 interface JwtUserPayload {
     id: string;
@@ -84,4 +84,46 @@ export const requireOwnerOrAdmin = (
     }
 
     res.status(403).json({ message: "Forbidden" });
+};
+
+export const requireBookingOwnerOrAdmin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    const currentUser = (req as any).user;
+    const bookingId = req.params.id;
+
+    if (!currentUser) {
+        res.status(401).json({ message: "Token not provided" });
+        return;
+    }
+
+    if (currentUser.role === "ADMIN") {
+        next();
+        return;
+    }
+
+    if (!bookingId) {
+        res.status(400).json({ message: "Booking id is required" });
+        return;
+    }
+
+    try {
+        const booking = await BookingModel.findById(bookingId);
+
+        if (!booking) {
+            res.status(404).json({ message: "Booking not found" });
+            return;
+        }
+
+        if (booking.userId.toString() === currentUser.id) {
+            next();
+            return;
+        }
+
+        res.status(403).json({ message: "Forbidden" });
+    } catch {
+        res.status(400).json({ message: "Invalid booking id" });
+    }
 };
