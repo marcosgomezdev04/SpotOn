@@ -1,0 +1,278 @@
+<div class="schedule-shell">
+  <header class="schedule-header">
+    <strong>SpotOn</strong>
+    <button type="button" (click)="logout()">Cerrar sesión</button>
+  </header>
+
+  <main>
+    @if (auth.session(); as session) {
+      <p class="user-info">
+        Hola, {{ session.email }}
+
+        @if (isAdmin()) {
+          <span class="admin-label">Administrador</span>
+        }
+      </p>
+    }
+
+    <div class="section-heading">
+      <div>
+        <h1>Horarios de canchas</h1>
+        <p>Consultá la disponibilidad y reservá tu próximo partido.</p>
+      </div>
+
+      <button
+        type="button"
+        [disabled]="busy()"
+        (click)="loadSchedules()"
+      >
+        Actualizar
+      </button>
+    </div>
+
+    @if (success()) {
+      <p class="notice success" role="status">{{ success() }}</p>
+    }
+
+    @if (error()) {
+      <p class="notice error" role="alert">{{ error() }}</p>
+    }
+
+    @if (working()) {
+      <p role="status">Procesando solicitud…</p>
+    }
+
+    @if (isAdmin()) {
+      <section class="panel" id="schedule-editor">
+        <h2>{{ editingId() ? 'Editar horario' : 'Crear horario' }}</h2>
+
+        <form #scheduleForm="ngForm" (ngSubmit)="saveSchedule(scheduleForm)">
+          <fieldset [disabled]="busy()">
+            <div class="form-grid">
+              <label>
+                Cancha
+                <select name="fieldName" [(ngModel)]="draft.fieldName" required>
+                  <option value="" disabled>Seleccioná una cancha</option>
+
+                  @for (field of fields; track field) {
+                    <option [value]="field">{{ field }}</option>
+                  }
+                </select>
+              </label>
+
+              <label>
+                Fecha
+                <input
+                  type="date"
+                  name="date"
+                  [(ngModel)]="draft.date"
+                  [min]="today"
+                  required
+                />
+              </label>
+
+              <label>
+                Hora de inicio
+                <input
+                  type="time"
+                  name="startTime"
+                  [(ngModel)]="draft.startTime"
+                  required
+                />
+              </label>
+
+              <label>
+                Hora de fin
+                <input
+                  type="time"
+                  name="endTime"
+                  [(ngModel)]="draft.endTime"
+                  required
+                />
+              </label>
+            </div>
+
+            @if (formError()) {
+              <p class="notice error" role="alert">{{ formError() }}</p>
+            }
+
+            <div class="actions">
+              <button
+                class="primary"
+                type="submit"
+                [disabled]="scheduleForm.invalid || busy()"
+              >
+                {{ editingId() ? 'Guardar cambios' : 'Crear horario' }}
+              </button>
+
+              @if (editingId()) {
+                <button type="button" (click)="cancelEdit(scheduleForm)">
+                  Cancelar edición
+                </button>
+              }
+            </div>
+          </fieldset>
+        </form>
+      </section>
+    }
+
+    <section class="panel" aria-label="Filtros de horarios">
+      <div class="form-grid">
+        <label>
+          Cancha
+          <select
+            [ngModel]="filterField()"
+            (ngModelChange)="filterField.set($event)"
+          >
+            <option value="">Todas las canchas</option>
+
+            @for (field of fields; track field) {
+              <option [value]="field">{{ field }}</option>
+            }
+          </select>
+        </label>
+
+        <label>
+          Fecha
+          <input
+            type="date"
+            [ngModel]="filterDate()"
+            (ngModelChange)="filterDate.set($event)"
+          />
+        </label>
+
+        <label>
+          Estado
+          <select
+            [ngModel]="filterStatus()"
+            (ngModelChange)="filterStatus.set($event)"
+          >
+            <option value="">Todos los estados</option>
+            <option value="AVAILABLE">Disponible</option>
+            <option value="BOOKED">Reservado</option>
+          </select>
+        </label>
+
+        <div class="filter-action">
+          <button type="button" (click)="clearFilters()">
+            Limpiar filtros
+          </button>
+        </div>
+      </div>
+    </section>
+
+    @if (selected(); as detail) {
+      <section class="panel detail" aria-label="Detalle del horario">
+        <div class="section-heading">
+          <h2>Detalle del horario</h2>
+          <button type="button" (click)="closeDetails()">Cerrar detalle</button>
+        </div>
+
+        <dl>
+          <dt>Cancha</dt>
+          <dd>{{ detail.fieldName || 'Sin identificar' }}</dd>
+
+          <dt>Fecha</dt>
+          <dd>{{ detail.date | date:'dd/MM/yyyy':'UTC' }}</dd>
+
+          <dt>Horario</dt>
+          <dd>{{ detail.startTime }} – {{ detail.endTime }}</dd>
+
+          <dt>Estado</dt>
+          <dd>{{ detail.status === 'AVAILABLE' ? 'Disponible' : 'Reservado' }}</dd>
+        </dl>
+      </section>
+    }
+
+    @if (loading()) {
+      <p role="status">Cargando horarios…</p>
+    } @else {
+      <p class="muted">{{ filteredSchedules().length }} horarios encontrados</p>
+
+      <div class="schedule-grid">
+        @for (schedule of filteredSchedules(); track schedule._id) {
+          <article class="schedule-card">
+            <h2>{{ schedule.fieldName || 'Cancha sin identificar' }}</h2>
+
+            <p>{{ schedule.date | date:'dd/MM/yyyy':'UTC' }}</p>
+
+            <p class="schedule-time">
+              {{ schedule.startTime }} – {{ schedule.endTime }}
+            </p>
+
+            <span
+              class="status"
+              [class.available]="schedule.status === 'AVAILABLE'"
+              [class.booked]="schedule.status === 'BOOKED'"
+            >
+              {{ schedule.status === 'AVAILABLE' ? 'Disponible' : 'Reservado' }}
+            </span>
+
+            <div class="actions card-actions">
+              <button
+                type="button"
+                [disabled]="busy()"
+                (click)="showDetails(schedule._id)"
+              >
+                Ver detalle
+              </button>
+
+              @if (
+                schedule.status === 'AVAILABLE' &&
+                isFutureSchedule(schedule)
+              ) {
+                <button
+                  class="primary"
+                  type="button"
+                  [disabled]="busy()"
+                  (click)="reserve(schedule)"
+                >
+                  Reservar
+                </button>
+              }
+            </div>
+
+            @if (isAdmin()) {
+              <div class="actions">
+                <button
+                  type="button"
+                  [disabled]="busy() || schedule.status === 'BOOKED'"
+                  (click)="startEdit(schedule)"
+                >
+                  Editar
+                </button>
+
+                <button
+                  class="danger"
+                  type="button"
+                  [disabled]="busy() || schedule.status === 'BOOKED'"
+                  (click)="removeSchedule(schedule)"
+                >
+                  Eliminar
+                </button>
+              </div>
+
+              @if (schedule.status === 'BOOKED') {
+                <p class="muted">
+                  La edición y eliminación están deshabilitadas
+                  mientras el horario figure como reservado.
+                </p>
+              }
+            }
+
+            @if (
+              schedule.status === 'AVAILABLE' &&
+              !isFutureSchedule(schedule)
+            ) {
+              <p class="muted">
+                No habilitado para nuevas reservas por su fecha o formato.
+              </p>
+            }
+          </article>
+        } @empty {
+          <p>No hay horarios que coincidan con la búsqueda.</p>
+        }
+      </div>
+    }
+  </main>
+</div> 
