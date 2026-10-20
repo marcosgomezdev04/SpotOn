@@ -1,6 +1,5 @@
 :root {
     --turf: #14573a;
-    --turf-deep: #0d3f2a;
     --chalk: #f4f6f3;
     --ink: #13211a;
     --muted: #55645b;
@@ -13,10 +12,12 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html, body, #root { height: 100%; }
+html, body { margin: 0; min-height: 100%; }
+
+
+app-root, app-login, app-register, app-home, app-auth-layout { display: block; }
 
 body {
-    margin: 0;
     font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
     color: var(--ink);
     background: var(--chalk);
@@ -35,7 +36,8 @@ a { color: var(--turf); font-weight: 600; }
 /* ---------- Pantallas de ingreso ---------- */
 
 .auth {
-    min-height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
     display: grid;
     grid-template-columns: minmax(320px, 5fr) 6fr;
 }
@@ -132,6 +134,8 @@ a { color: var(--turf); font-weight: 600; }
     box-shadow: 0 0 0 3px rgba(20, 87, 58, 0.2);
 }
 
+.field input[aria-invalid="true"] { border-color: var(--error); }
+
 .pw { position: relative; }
 .pw input { padding-right: 92px; }
 
@@ -154,6 +158,7 @@ a { color: var(--turf); font-weight: 600; }
 .toggle:hover { background: rgba(20, 87, 58, 0.08); }
 
 .hint { margin: 0.35rem 0 0; font-size: 0.875rem; color: var(--muted); }
+.field-error { margin: 0.35rem 0 0; font-size: 0.875rem; color: var(--error); }
 
 .error {
     margin: 0 0 1.1rem;
