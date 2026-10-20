@@ -4,17 +4,16 @@ info:
 
 http:
   method: POST
-  url: http://localhost:3000/booking/post
+  url: "{{baseUrl}}/booking/post"
   body:
     type: json
     data: |-
       {
-          "userId": "6a4367c0d1ea05b2560419f2",
           "scheduleId": "6a4dc3ca8150f52e4695c576"
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDcxODQ1LCJleHAiOjE3ODM1NTgyNDV9.xmquJ5hKZE_vOApDGdiUENHzNE5KygrxqmP5SQpKRc8
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

@@ -23,7 +23,7 @@ export class UserRepository implements IUserRepository {
     public async findByEmail(
         email: string
     ): Promise<IUser | null> {
-        return await UserModel.findOne({ email });
+        return await UserModel.findOne({ email }).select("+password");
     }
 
     public async update(

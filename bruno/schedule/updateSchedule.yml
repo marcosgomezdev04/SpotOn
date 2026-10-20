@@ -4,7 +4,7 @@ info:
 
 http:
   method: PUT
-  url: http://localhost:3000/schedule/update/:id
+  url: "{{baseUrl}}/schedule/update/:id"
   params:
     - name: id
       value: 6a4d9fa1ed9ad7d24497f186
@@ -20,7 +20,7 @@ http:
       }
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDcxODQ1LCJleHAiOjE3ODM1NTgyNDV9.xmquJ5hKZE_vOApDGdiUENHzNE5KygrxqmP5SQpKRc8
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

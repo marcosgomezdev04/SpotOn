@@ -1,5 +1,14 @@
-import { IUser } from "../interfaces/user.interface";
+import bcrypt from "bcrypt";
+import { IUser, UserRole } from "../interfaces/user.interface";
+import { HttpError } from "../errors/http-error";
 import { IUserRepository } from "../repositories/interface/user.repository.interface";
+
+export interface RequesterContext {
+    id: string;
+    role: string;
+}
+
+const VALID_ROLES: UserRole[] = ["USER", "ADMIN"];
 
 export class UserService {
 
@@ -19,7 +28,14 @@ export class UserService {
             throw new Error("All fields are required.");
         }
 
-        return await this.userRepository.create(userData);
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+        return await this.userRepository.create({
+            name: userData.name,
+            email: userData.email,
+            password: hashedPassword,
+            role: "USER"
+        });
     }
 
     public async getUsers(): Promise<IUser[]> {
@@ -54,7 +70,8 @@ export class UserService {
 
     public async updateUser(
         id: string,
-        userData: Partial<IUser>
+        userData: Partial<IUser>,
+        requester: RequesterContext
     ): Promise<IUser | null> {
 
         const user = await this.userRepository.findById(id);
@@ -63,18 +80,44 @@ export class UserService {
             throw new Error("User not found.");
         }
 
-        if (userData.name !== undefined && userData.name.trim() === "") {
-            throw new Error("Name cannot be empty.");
+        // Lista blanca: solo estos campos se pueden modificar desde la API
+        const updates: Partial<IUser> = {};
+
+        if (userData.name !== undefined) {
+            if (userData.name.trim() === "") {
+                throw new Error("Name cannot be empty.");
+            }
+            updates.name = userData.name;
         }
 
-        if (userData.email !== undefined && userData.email.trim() === "") {
-            throw new Error("Email cannot be empty.");
+        if (userData.email !== undefined) {
+            if (userData.email.trim() === "") {
+                throw new Error("Email cannot be empty.");
+            }
+            updates.email = userData.email;
         }
 
-        if (userData.password !== undefined && userData.password.trim() === "") {
-            throw new Error("Password cannot be empty.");
+        if (userData.password !== undefined) {
+            if (userData.password.trim() === "") {
+                throw new Error("Password cannot be empty.");
+            }
+            // Nunca guardar la contraseña en texto plano
+            updates.password = await bcrypt.hash(userData.password, 10);
         }
 
-        return await this.userRepository.update(id, userData);
+        if (userData.role !== undefined) {
+            // Solo un ADMIN puede cambiar roles (evita auto-promoción a ADMIN)
+            if (requester.role !== "ADMIN") {
+                throw new HttpError(403, "Only admins can change roles.");
+            }
+
+            if (!VALID_ROLES.includes(userData.role)) {
+                throw new Error("Invalid role.");
+            }
+
+            updates.role = userData.role;
+        }
+
+        return await this.userRepository.update(id, updates);
     }
 }

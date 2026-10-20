@@ -11,8 +11,7 @@ export class AuthService {
     public async register(
         name: string,
         email: string,
-        password: string,
-        role: "USER" | "ADMIN" = "USER"
+        password: string
     ) {
 
         const existingUser =
@@ -29,7 +28,9 @@ export class AuthService {
             name,
             email,
             password: hashedPassword,
-            role
+            // El rol nunca viene del cliente: todo registro público es USER.
+            // Los admins se crean con ADMIN_EMAIL/ADMIN_PASSWORD o por otro ADMIN.
+            role: "USER"
         });
     }
 

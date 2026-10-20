@@ -17,6 +17,7 @@ const UserSchema = new Schema<IUser>(
         password: {
             type: String,
             required: true,
+            select: false, // no se devuelve en las consultas salvo que se pida con +password
         },
         role: {
             type: String,
@@ -27,6 +28,14 @@ const UserSchema = new Schema<IUser>(
     },
     {
         timestamps: true,
+        toJSON: {
+            // Nunca serializar el hash en las respuestas de la API
+            transform: (_doc: unknown, ret: any) => {
+                delete ret.password;
+                delete ret.__v;
+                return ret;
+            },
+        },
     }
 );
 

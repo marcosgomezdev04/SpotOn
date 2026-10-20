@@ -6,7 +6,25 @@ import bcrypt from 'bcrypt';
 
 dotenv.config();
 
+function validateEnv(): void {
+    const secret = process.env.JWT_SECRET;
+
+    if (!process.env.MONGO_URI) {
+        console.error("Falta la variable de entorno MONGO_URI.");
+        process.exit(1);
+    }
+
+    if (!secret || secret.length < 32) {
+        console.error(
+            "JWT_SECRET no está definido o es muy corto (mínimo 32 caracteres). " +
+            "Generá uno con: node -e \"console.log(require('crypto').randomBytes(48).toString('hex'))\""
+        );
+        process.exit(1);
+    }
+}
+
 async function bootstrap() {
+    validateEnv();
     await MongoDB.connect();
 
     const adminEmail = process.env.ADMIN_EMAIL;

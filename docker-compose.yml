@@ -13,7 +13,9 @@ services:
       - mongo
     environment:
       - MONGO_URI=mongodb://mongo:27017/SpotOn
-      - JWT_SECRET=SpotOn_jwt_key
+      - JWT_SECRET=${JWT_SECRET:?Definí JWT_SECRET en tu archivo .env}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
 
   mongo:
     image: mongo:8

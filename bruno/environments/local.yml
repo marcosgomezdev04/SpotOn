@@ -1,0 +1,14 @@
+# Copiá este archivo como "local.yml" dentro de Bruno (Environments) y completá los valores.
+# NO subas tokens ni credenciales reales al repositorio.
+name: local
+variables:
+  - name: baseUrl
+    value: http://localhost:3000
+  - name: adminEmail
+    value: admin@example.com
+  - name: adminPassword
+    value: cambiar-esto
+  - name: token
+    value: ""
+  - name: userId
+    value: ""

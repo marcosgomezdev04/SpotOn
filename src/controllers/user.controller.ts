@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
+import { HttpError } from "../errors/http-error";
 
 export class UserController {
 
@@ -62,7 +63,11 @@ export class UserController {
 
         try {
 
-            const user = await this.userService.updateUser(req.params.id as string, req.body);
+            const user = await this.userService.updateUser(
+                req.params.id as string,
+                req.body,
+                (req as any).user
+            );
 
             if (!user) {
                 return res.status(404).json({message: "User not found"});
@@ -71,7 +76,8 @@ export class UserController {
             res.status(200).json(user);
 
         } catch (error: any) {
-            res.status(400).json({message: error.message});
+            const status = error instanceof HttpError ? error.statusCode : 400;
+            res.status(status).json({message: error.message});
         }
     };
 }

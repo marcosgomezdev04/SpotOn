@@ -4,7 +4,7 @@ info:
 
 http:
   method: PUT
-  url: http://localhost:3000/user/update/6a296eedf4d25025a6b46472
+  url: "{{baseUrl}}/user/update/{{userId}}"
   headers:
     - name: Content-Type
       value: application/json
@@ -23,4 +23,3 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
-​

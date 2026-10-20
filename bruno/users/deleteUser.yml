@@ -5,10 +5,10 @@ info:
 
 http:
   method: DELETE
-  url: http://localhost:3000/user/delete/6a442cea4d9ea48a919ca956
+  url: "{{baseUrl}}/user/delete/{{userId}}"
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDA3NzA2LCJleHAiOjE3ODM0OTQxMDZ9.RA1xTFQA9r2Z6M3WsYUoVJDhf2xrUczKZY-PljdiZUA
+    token: "{{token}}"
 
 settings:
   encodeUrl: true

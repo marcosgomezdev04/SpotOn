@@ -4,14 +4,14 @@ info:
 
 http:
   method: GET
-  url: http://localhost:3000/booking/getById/:id
+  url: "{{baseUrl}}/booking/getById/:id"
   params:
     - name: id
       value: 6a4dc5ab24c17bf35cc9037c
       type: path
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmNvc2dvbWV6MTAwNzA0QGdtYWlsLmNvbSIsImlkIjoiNmE0MzY3YzBkMWVhMDViMjU2MDQxOWYyIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgzNDcxODQ1LCJleHAiOjE3ODM1NTgyNDV9.xmquJ5hKZE_vOApDGdiUENHzNE5KygrxqmP5SQpKRc8
+    token: "{{token}}"
 
 settings:
   encodeUrl: true
