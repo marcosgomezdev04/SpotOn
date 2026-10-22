@@ -2,22 +2,26 @@ import { UserRepository } from "./repositories/user.repository";
 import { UserService } from "./services/user.service";
 import { UserController } from "./controllers/user.controller";
 import { UserRoutes } from "./routes/user.routes";
+
 import { AuthService } from "./services/auth.service";
 import { AuthController } from "./controllers/auth.controller";
 import { AuthRoutes } from "./routes/auth.routes";
+
 import { ScheduleRepository } from "./repositories/schedule.repository";
 import { ScheduleService } from "./services/schedule.service";
 import { ScheduleController } from "./controllers/schedule.controller";
 import { ScheduleRoutes } from "./routes/schedule.routes";
+
 import { BookingRepository } from "./repositories/booking.repository";
 import { BookingService } from "./services/booking.service";
 import { BookingController } from "./controllers/booking.controller";
 import { BookingRoutes } from "./routes/booking.routes";
 
-
 export function createDependencies() {
-
     const userRepository = new UserRepository();
+    const scheduleRepository = new ScheduleRepository();
+    const bookingRepository = new BookingRepository();
+
     const userService = new UserService(userRepository);
     const userController = new UserController(userService);
     const userRoutes = new UserRoutes(userController);
@@ -26,12 +30,13 @@ export function createDependencies() {
     const authController = new AuthController(authService);
     const authRoutes = new AuthRoutes(authController);
 
-    const scheduleRepository = new ScheduleRepository();
-    const scheduleService = new ScheduleService(scheduleRepository);
+    const scheduleService = new ScheduleService(
+        scheduleRepository,
+        bookingRepository
+    );
     const scheduleController = new ScheduleController(scheduleService);
     const scheduleRoutes = new ScheduleRoutes(scheduleController);
 
-    const bookingRepository = new BookingRepository();
     const bookingService = new BookingService(
         bookingRepository,
         scheduleRepository
@@ -45,4 +50,4 @@ export function createDependencies() {
         scheduleRoutes,
         bookingRoutes
     };
-}
+} 

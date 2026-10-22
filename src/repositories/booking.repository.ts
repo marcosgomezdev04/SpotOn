@@ -3,7 +3,6 @@ import { BookingModel } from "../models/booking.model";
 import { IBookingRepository } from "./interface/booking.repository.interface";
 
 export class BookingRepository implements IBookingRepository {
-
     public async create(
         bookingData: Partial<IBooking>
     ): Promise<IBooking> {
@@ -14,16 +13,25 @@ export class BookingRepository implements IBookingRepository {
         return await BookingModel.find();
     }
 
-    public async findById(
-        id: string
-    ): Promise<IBooking | null> {
+    public async findById(id: string): Promise<IBooking | null> {
         return await BookingModel.findById(id);
     }
 
-    public async findByUserId(
-        userId: string
-    ): Promise<IBooking[]> {
+    public async findByUserId(userId: string): Promise<IBooking[]> {
         return await BookingModel.find({ userId });
+    }
+
+    public async existsByScheduleId(
+        scheduleId: string,
+        status?: "CONFIRMED" | "CANCELLED"
+    ): Promise<boolean> {
+        const filter = status
+            ? { scheduleId, status }
+            : { scheduleId };
+
+        const booking = await BookingModel.exists(filter);
+
+        return booking !== null;
     }
 
     public async update(
@@ -33,15 +41,11 @@ export class BookingRepository implements IBookingRepository {
         return await BookingModel.findByIdAndUpdate(
             id,
             bookingData,
-            {
-                new: true
-            }
+            { new: true }
         );
     }
 
-    public async delete(
-        id: string
-    ): Promise<IBooking | null> {
+    public async delete(id: string): Promise<IBooking | null> {
         return await BookingModel.findByIdAndDelete(id);
     }
-}
+} 
