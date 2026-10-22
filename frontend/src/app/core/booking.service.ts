@@ -19,4 +19,17 @@ export class BookingService {
       scheduleId,
     });
   }
-} 
+
+  // Reservas del usuario que inició sesión (confirmadas y canceladas)
+  getMyBookings(): Observable<Booking[]> {
+    return this.http.get<Booking[]>(`${this.apiUrl}/getMyBookings`);
+  }
+
+  // En el backend "delete" no borra: marca la reserva como CANCELLED
+  // y deja el horario disponible de nuevo.
+  cancelBooking(id: string): Observable<Booking> {
+    return this.http.delete<Booking>(
+      `${this.apiUrl}/delete/${encodeURIComponent(id)}`
+    );
+  }
+}

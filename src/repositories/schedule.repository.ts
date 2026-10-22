@@ -48,4 +48,14 @@ export class ScheduleRepository implements IScheduleRepository {
     ): Promise<ISchedule | null> {
         return await ScheduleModel.findByIdAndDelete(id);
     }
+
+    public async reserveIfAvailable(
+        id: string
+    ): Promise<ISchedule | null> {
+        return await ScheduleModel.findOneAndUpdate(
+            { _id: id, status: "AVAILABLE" },
+            { status: "BOOKED" },
+            { new: true }
+        );
+    }
 }

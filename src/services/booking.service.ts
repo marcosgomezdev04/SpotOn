@@ -1,4 +1,5 @@
 import { IBooking } from "../interfaces/booking.interface";
+import { HttpError } from "../errors/http-error";
 import { IBookingRepository } from "../repositories/interface/booking.repository.interface";
 import { IScheduleRepository } from "../repositories/interface/schedule.repository.interface";
 
@@ -14,50 +15,60 @@ export class BookingService {
     ): Promise<IBooking> {
 
         if (!bookingData.userId) {
-            throw new Error("User is required.");
+            throw new HttpError(400, "El usuario es obligatorio.");
         }
 
         if (!bookingData.scheduleId) {
-            throw new Error("Schedule is required.");
+            throw new HttpError(400, "El horario es obligatorio.");
         }
 
+        const userId = bookingData.userId.toString();
         const scheduleId = bookingData.scheduleId.toString();
 
         const schedule = await this.scheduleRepository.findById(scheduleId);
 
         if (!schedule) {
-            throw new Error("Schedule not found.");
+            throw new HttpError(404, "El horario no existe.");
         }
 
         if (schedule.status === "BOOKED") {
-            throw new Error("This schedule is already booked.");
+            throw new HttpError(409, "Este horario ya está reservado.");
         }
 
-        const existingBooking = await this.bookingRepository.findByUserId(
-            bookingData.userId.toString()
-        );
+        // Una reserva cancelada no cuenta: se puede volver a reservar el mismo horario.
+        const userBookings = await this.bookingRepository.findByUserId(userId);
 
-        const alreadyBooked = existingBooking.some(
-            (booking) => booking.scheduleId.toString() === scheduleId
+        const alreadyBooked = userBookings.some(
+            (booking) =>
+                booking.status === "CONFIRMED" &&
+                booking.scheduleId.toString() === scheduleId
         );
 
         if (alreadyBooked) {
-            throw new Error("You already have a booking for this schedule.");
+            throw new HttpError(409, "Ya tenés una reserva para este horario.");
         }
 
-        const booking = await this.bookingRepository.create({
-            ...bookingData,
-            status: "CONFIRMED"
-        });
+        // Paso atómico: si dos personas reservan a la vez, solo una lo consigue.
+        const reserved = await this.scheduleRepository.reserveIfAvailable(scheduleId);
 
-        await this.scheduleRepository.update(
-            scheduleId,
-            {
-                status: "BOOKED"
-            }
-        );
+        if (!reserved) {
+            throw new HttpError(409, "Este horario ya está reservado.");
+        }
 
-        return booking;
+        try {
+            return await this.bookingRepository.create({
+                userId: bookingData.userId,
+                scheduleId: bookingData.scheduleId,
+                status: "CONFIRMED"
+            });
+        } catch (error) {
+            // Si no se pudo guardar la reserva, el horario vuelve a quedar libre.
+            await this.scheduleRepository.update(scheduleId, {
+                status: "AVAILABLE"
+            });
+
+            throw error;
+        }
     }
 
     public async getAllBookings(): Promise<IBooking[]> {
@@ -71,7 +82,7 @@ export class BookingService {
         const booking = await this.bookingRepository.findById(id);
 
         if (!booking) {
-            throw new Error("Booking not found.");
+            throw new HttpError(404, "La reserva no existe.");
         }
 
         return booking;
@@ -91,21 +102,27 @@ export class BookingService {
         const booking = await this.bookingRepository.findById(id);
 
         if (!booking) {
-            throw new Error("Booking not found.");
+            throw new HttpError(404, "La reserva no existe.");
         }
 
         if (bookingData.userId && bookingData.userId.toString() !== booking.userId.toString()) {
-            throw new Error("You cannot change the user of a booking.");
+            throw new HttpError(400, "No se puede cambiar el usuario de una reserva.");
         }
 
         if (bookingData.scheduleId && bookingData.scheduleId.toString() !== booking.scheduleId.toString()) {
-            throw new Error("You cannot change the schedule of a booking.");
+            throw new HttpError(400, "No se puede cambiar el horario de una reserva.");
         }
 
-        return await this.bookingRepository.update(
-            id,
-            bookingData
-        );
+        // El estado lo maneja el sistema: se confirma al reservar y se cancela con DELETE.
+        // Si se pudiera editar acá, el horario y la reserva quedarían desincronizados.
+        if (bookingData.status !== undefined && bookingData.status !== booking.status) {
+            throw new HttpError(
+                400,
+                "El estado de una reserva no se puede modificar. Para cancelarla, usá la opción de cancelar."
+            );
+        }
+
+        return booking;
     }
 
     public async deleteBooking(
@@ -115,11 +132,11 @@ export class BookingService {
         const booking = await this.bookingRepository.findById(id);
 
         if (!booking) {
-            throw new Error("Booking not found.");
+            throw new HttpError(404, "La reserva no existe.");
         }
 
         if (booking.status === "CANCELLED") {
-            throw new Error("This booking is already cancelled.");
+            throw new HttpError(409, "Esta reserva ya está cancelada.");
         }
 
         const updatedBooking = await this.bookingRepository.update(

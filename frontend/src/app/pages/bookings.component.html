@@ -1,0 +1,114 @@
+<div class="schedule-shell">
+  <main>
+    <div class="section-heading">
+      <div>
+        <h1>Mis reservas</h1>
+        <p>Revisá tus próximos partidos y cancelá los que ya no vas a jugar.</p>
+      </div>
+
+      <button type="button" [disabled]="busy()" (click)="load()">
+        Actualizar
+      </button>
+    </div>
+
+    @if (success()) {
+      <p class="notice success" role="status">{{ success() }}</p>
+    }
+
+    @if (error()) {
+      <p class="notice error" role="alert">{{ error() }}</p>
+    }
+
+    @if (working()) {
+      <p role="status">Procesando solicitud…</p>
+    }
+
+    @if (loading()) {
+      <p role="status">Cargando reservas…</p>
+    } @else if (upcoming().length === 0 && history().length === 0 && !error()) {
+      <section class="panel empty">
+        <h2>Todavía no tenés reservas</h2>
+        <p>Elegí un horario disponible y reservá tu primera cancha.</p>
+        <a routerLink="/">Ver horarios disponibles</a>
+      </section>
+    } @else {
+      <h2 class="group-title">Próximas</h2>
+
+      <div class="schedule-grid">
+        @for (view of upcoming(); track view.booking._id) {
+          <article class="schedule-card">
+            <h3>{{ view.schedule?.fieldName }}</h3>
+
+            <p>{{ view.schedule?.date | date: 'dd/MM/yyyy' : 'UTC' }}</p>
+
+            <p class="schedule-time">
+              {{ view.schedule?.startTime }} – {{ view.schedule?.endTime }}
+            </p>
+
+            <span class="status available">{{ statusLabel(view) }}</span>
+
+            <div class="actions card-actions">
+              <button
+                class="danger"
+                type="button"
+                [disabled]="busy()"
+                (click)="cancel(view)"
+              >
+                Cancelar reserva
+              </button>
+            </div>
+          </article>
+        } @empty {
+          <p class="muted">
+            No tenés reservas próximas.
+            <a routerLink="/">Ver horarios disponibles</a>
+          </p>
+        }
+      </div>
+
+      @if (history().length > 0) {
+        <h2 class="group-title">Anteriores y canceladas</h2>
+
+        <div class="schedule-grid">
+          @for (view of history(); track view.booking._id) {
+            <article class="schedule-card past">
+              @if (view.schedule; as schedule) {
+                <h3>{{ schedule.fieldName }}</h3>
+
+                <p>{{ schedule.date | date: 'dd/MM/yyyy' : 'UTC' }}</p>
+
+                <p class="schedule-time">
+                  {{ schedule.startTime }} – {{ schedule.endTime }}
+                </p>
+              } @else {
+                <h3>Horario eliminado</h3>
+                <p class="muted">Este horario ya no existe.</p>
+              }
+
+              <span
+                class="status"
+                [class.cancelled]="view.booking.status === 'CANCELLED'"
+                [class.finished]="view.booking.status === 'CONFIRMED'"
+              >
+                {{ statusLabel(view) }}
+              </span>
+
+              @if (view.booking.status === 'CONFIRMED' && !view.schedule) {
+                <div class="actions card-actions">
+                  <button
+                    class="danger"
+                    type="button"
+                    [disabled]="busy()"
+                    (click)="cancel(view)"
+                  >
+                    Cancelar reserva
+                  </button>
+                </div>
+              }
+            </article>
+          }
+        </div>
+      }
+    }
+  </main>
+</div>

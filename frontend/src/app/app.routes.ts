@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/auth.guards';
 
-// Cuando sumes user, booking o schedule, agregá sus rutas acá con canActivate: [authGuard].
+// Las pantallas con sesión iniciada son rutas hijas de AppShellComponent,
+// que dibuja el encabezado con el menú. Para sumar una sección nueva,
+// agregá una ruta hija acá y un link en app-shell.component.ts.
 export const routes: Routes = [
   {
     path: 'login',
@@ -15,9 +17,20 @@ export const routes: Routes = [
   },
   {
     path: '',
-    pathMatch: 'full',
     canActivate: [authGuard],
-    loadComponent: () => import('./pages/home.component').then((m) => m.HomeComponent),
+    loadComponent: () =>
+      import('./components/app-shell.component').then((m) => m.AppShellComponent),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () => import('./pages/home.component').then((m) => m.HomeComponent),
+      },
+      {
+        path: 'reservas',
+        loadComponent: () => import('./pages/bookings.component').then((m) => m.BookingsComponent),
+      },
+    ],
   },
   { path: '**', redirectTo: '' },
 ];

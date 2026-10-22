@@ -8,7 +8,6 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../core/auth.service';
@@ -29,7 +28,6 @@ import {
 export class HomeComponent implements OnInit {
   protected readonly auth = inject(AuthService);
 
-  private readonly router = inject(Router);
   private readonly scheduleService = inject(ScheduleService);
   private readonly bookingService = inject(BookingService);
 
@@ -403,10 +401,5 @@ export class HomeComponent implements OnInit {
       default:
         return 'El servidor no pudo completar la operación. Actualizá la lista antes de reintentar.';
     }
-  }
-
-  protected logout(): void {
-    this.auth.logout();
-    this.router.navigateByUrl('/login');
   }
 } 

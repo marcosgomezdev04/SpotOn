@@ -19,4 +19,8 @@ export interface IScheduleRepository {
     ): Promise<ISchedule | null>;
 
     delete(id: string): Promise<ISchedule | null>;
+
+    // Marca el horario como BOOKED solo si estaba AVAILABLE, en una única
+    // operación atómica. Devuelve null si ya estaba reservado (o no existe).
+    reserveIfAvailable(id: string): Promise<ISchedule | null>;
 }

@@ -1,20 +1,5 @@
 <div class="schedule-shell">
-  <header class="schedule-header">
-    <strong>SpotOn</strong>
-    <button type="button" (click)="logout()">Cerrar sesión</button>
-  </header>
-
   <main>
-    @if (auth.session(); as session) {
-      <p class="user-info">
-        Hola, {{ session.email }}
-
-        @if (isAdmin()) {
-          <span class="admin-label">Administrador</span>
-        }
-      </p>
-    }
-
     <div class="section-heading">
       <div>
         <h1>Horarios de canchas</h1>

@@ -1,0 +1,32 @@
+/* Complementa a home.css, que ya trae tarjetas, botones y estados. */
+
+.group-title {
+  margin: 32px 0 16px;
+}
+
+.schedule-card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.schedule-card.past {
+  background: #fafbfc;
+}
+
+.status.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status.finished {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.empty h2 {
+  margin-bottom: 8px;
+}
+
+.empty p {
+  margin: 0 0 16px;
+}
