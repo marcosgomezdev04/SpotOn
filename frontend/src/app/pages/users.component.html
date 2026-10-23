@@ -1,0 +1,151 @@
+<main class="users-shell">
+  @if (!isAdmin()) {
+    <p class="notice error" role="alert">
+      Esta sección es exclusiva para administradores.
+    </p>
+  } @else {
+    <header class="section-heading">
+      <div>
+        <h1>Usuarios</h1>
+        <p>Consultá y actualizá los datos de los usuarios registrados.</p>
+      </div>
+
+      <button type="button" [disabled]="busy()" (click)="load()">
+        Actualizar
+      </button>
+    </header>
+
+    @if (error()) {
+      <p class="notice error" role="alert">{{ error() }}</p>
+    }
+
+    @if (success()) {
+      <p class="notice success" role="status">{{ success() }}</p>
+    }
+
+    @if (working()) {
+      <p role="status">Procesando solicitud…</p>
+    }
+
+    <div class="search-field">
+      <label for="user-search">Buscar por nombre o correo</label>
+      <input
+        id="user-search"
+        type="search"
+        placeholder="Escribí un nombre o correo"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+    </div>
+
+    @if (selected(); as user) {
+      <section class="panel" aria-labelledby="user-detail-title">
+        <div class="section-heading">
+          <h2 id="user-detail-title">
+            {{ editing() ? 'Editar usuario' : 'Detalle del usuario' }}
+          </h2>
+
+          <button type="button" [disabled]="busy()" (click)="close()">
+            Cerrar
+          </button>
+        </div>
+
+        @if (editing()) {
+          <form #userForm="ngForm" (ngSubmit)="save(userForm)">
+            <div class="form-grid">
+              <div>
+                <label for="user-name">Nombre</label>
+                <input
+                  id="user-name"
+                  name="name"
+                  required
+                  [(ngModel)]="draft.name"
+                  [disabled]="busy()"
+                />
+              </div>
+
+              <div>
+                <label for="user-email">Correo electrónico</label>
+                <input
+                  id="user-email"
+                  name="email"
+                  type="email"
+                  required
+                  email
+                  [(ngModel)]="draft.email"
+                  [disabled]="busy()"
+                />
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="primary" type="submit" [disabled]="busy()">
+                Guardar cambios
+              </button>
+              <button type="button" [disabled]="busy()" (click)="close()">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        } @else {
+          <dl>
+            <dt>Nombre</dt>
+            <dd>{{ user.name }}</dd>
+
+            <dt>Correo</dt>
+            <dd>{{ user.email }}</dd>
+
+            <dt>Rol</dt>
+            <dd>{{ user.role === 'ADMIN' ? 'Administrador' : 'Usuario' }}</dd>
+
+            <dt>Identificador</dt>
+            <dd>{{ user._id }}</dd>
+          </dl>
+
+          <button type="button" [disabled]="busy()" (click)="open(user, true)">
+            Editar datos
+          </button>
+        }
+      </section>
+    }
+
+    @if (loading()) {
+      <p role="status">Cargando usuarios…</p>
+    } @else {
+      <div class="users-grid">
+        @for (user of filteredUsers(); track user._id) {
+          <article class="panel user-card">
+            <span class="role" [class.admin]="user.role === 'ADMIN'">
+              {{ user.role === 'ADMIN' ? 'Administrador' : 'Usuario' }}
+            </span>
+
+            <h2>{{ user.name }}</h2>
+            <p>{{ user.email }}</p>
+
+            <div class="actions">
+              <button
+                type="button"
+                [disabled]="busy()"
+                (click)="open(user, false)"
+              >
+                Ver detalle
+              </button>
+
+              <button
+                type="button"
+                [disabled]="busy()"
+                (click)="open(user, true)"
+              >
+                Editar
+              </button>
+            </div>
+          </article>
+        } @empty {
+          @if (!error()) {
+            <p>No se encontraron usuarios.</p>
+          }
+        }
+      </div>
+    }
+  }
+</main> 
