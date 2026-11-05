@@ -1,23 +1,29 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 // Encabezado compartido de las pantallas con sesión iniciada.
 // Cuando se sume una sección nueva (por ejemplo Usuarios), se agrega un link acá
 // y una ruta hija en app.routes.ts.
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConfirmDialogComponent],
   template: `
     <div class="bar">
       <header class="app-header">
-        <strong class="brand">SpotOn</strong>
+        <strong class="brand">MatchDay</strong>
 
         <nav aria-label="Secciones">
           <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             Horarios
           </a>
-          <a routerLink="/reservas" routerLinkActive="active">Mis reservas</a>
+          @if (!isAdmin()) {
+            <a routerLink="/reservas" routerLinkActive="active">Mis reservas</a>
+          }
+          @if (isAdmin()) {
+            <a routerLink="/usuarios" routerLinkActive="active">Usuarios</a>
+          }
         </nav>
 
         <div class="account">
@@ -35,13 +41,21 @@ import { AuthService } from '../core/auth.service';
     </div>
 
     <router-outlet />
+    <app-confirm-dialog />
   `,
   styles: `
     :host {
       display: block;
       min-height: 100vh;
-      background: #f4f7f6;
       color: #18212f;
+      background-color: #eef4f0;
+      /* Cancha de fondo: líneas suaves + degradado verde */
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='340' viewBox='0 0 520 340' fill='none' stroke='%23166534' stroke-opacity='0.09' stroke-width='3'%3E%3Crect x='10' y='10' width='500' height='320' rx='6'/%3E%3Cpath d='M260 10v320'/%3E%3Ccircle cx='260' cy='170' r='48'/%3E%3Crect x='10' y='95' width='80' height='150'/%3E%3Crect x='430' y='95' width='80' height='150'/%3E%3C/svg%3E"),
+        radial-gradient(900px 500px at 100% 0%, rgba(22, 101, 52, 0.14), transparent 70%),
+        radial-gradient(800px 500px at 0% 100%, rgba(255, 201, 51, 0.16), transparent 70%);
+      background-repeat: repeat, no-repeat, no-repeat;
+      background-attachment: fixed;
     }
 
     .bar {
@@ -136,6 +150,10 @@ import { AuthService } from '../core/auth.service';
 export class AppShellComponent {
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+
+  protected readonly isAdmin = computed(
+    () => this.auth.session()?.role === 'ADMIN'
+  );
 
   protected logout(): void {
     this.auth.logout();

@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 
 import { Booking, BookingService } from '../core/booking.service';
+import { ConfirmService } from '../core/confirm.service';
 import { Schedule, ScheduleService } from '../core/schedule.service';
 
 // Una reserva junto con los datos de su horario.
@@ -25,6 +26,7 @@ interface BookingView {
 export class BookingsComponent implements OnInit {
   private readonly bookingService = inject(BookingService);
   private readonly scheduleService = inject(ScheduleService);
+  private readonly confirmDialog = inject(ConfirmService);
 
   protected readonly bookings = signal<Booking[]>([]);
   private readonly schedules = signal<Schedule[]>([]);
@@ -98,16 +100,27 @@ export class BookingsComponent implements OnInit {
       });
   }
 
-  protected cancel(view: BookingView): void {
+  protected async cancel(view: BookingView): Promise<void> {
     if (this.busy() || view.booking.status !== 'CONFIRMED') return;
 
     const schedule = view.schedule;
-    const detail = schedule
-      ? `${schedule.fieldName} el ${this.formatDate(schedule.date)} ` +
-        `de ${schedule.startTime} a ${schedule.endTime}`
-      : 'esta reserva';
 
-    if (!window.confirm(`¿Cancelar la reserva de ${detail}?`)) return;
+    const confirmed = await this.confirmDialog.ask({
+      title: '¿Cancelar esta reserva?',
+      message: 'El horario volverá a quedar disponible para otras personas.',
+      details: schedule
+        ? [
+            { label: 'Cancha', value: schedule.fieldName },
+            { label: 'Fecha', value: this.formatDate(schedule.date) },
+            { label: 'Horario', value: `${schedule.startTime} a ${schedule.endTime}` },
+          ]
+        : undefined,
+      confirmLabel: 'Sí, cancelar',
+      cancelLabel: 'No, mantener',
+      tone: 'danger',
+    });
+
+    if (!confirmed || this.busy()) return;
 
     this.error.set('');
     this.success.set('');

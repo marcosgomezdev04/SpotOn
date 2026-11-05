@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-// Pantalla partida: media cancha a la izquierda (el punto penal es el "spot" de SpotOn)
+// Pantalla partida: media cancha a la izquierda (el punto penal es el "spot" del partido)
 // y el formulario a la derecha. El pie lleva el atributo "footer".
 @Component({
   selector: 'app-auth-layout',
@@ -23,7 +23,7 @@ import { Component, input } from '@angular/core';
           <circle cx="200" cy="470" r="6" fill="#ffc933" />
         </svg>
 
-        <p class="wordmark">SpotOn</p>
+        <p class="wordmark">MatchDay</p>
         <p class="tagline">Elegí cancha, día y horario. Nosotros guardamos tu turno.</p>
       </aside>
 

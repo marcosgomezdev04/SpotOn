@@ -12,6 +12,7 @@ import { finalize } from 'rxjs';
 
 import { AuthService } from '../core/auth.service';
 import { BookingService } from '../core/booking.service';
+import { ConfirmService } from '../core/confirm.service';
 import {
   CreateScheduleData,
   Schedule,
@@ -30,6 +31,7 @@ export class HomeComponent implements OnInit {
 
   private readonly scheduleService = inject(ScheduleService);
   private readonly bookingService = inject(BookingService);
+  private readonly confirmDialog = inject(ConfirmService);
 
   protected readonly fields = [
     'Cancha 1',
@@ -257,7 +259,7 @@ export class HomeComponent implements OnInit {
       });
   }
 
-  protected removeSchedule(schedule: Schedule): void {
+  protected async removeSchedule(schedule: Schedule): Promise<void> {
     if (
       !this.isAdmin() ||
       this.busy() ||
@@ -266,13 +268,16 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    const confirmed = window.confirm(
-      `¿Eliminar el horario de ${schedule.fieldName || 'esta cancha'} ` +
-      `del ${this.formatDate(schedule.date)} ` +
-      `de ${schedule.startTime} a ${schedule.endTime}?`
-    );
+    const confirmed = await this.confirmDialog.ask({
+      title: '¿Eliminar este horario?',
+      message: 'Esta acción no se puede deshacer.',
+      details: this.detailsOf(schedule),
+      confirmLabel: 'Sí, eliminar',
+      cancelLabel: 'No, volver',
+      tone: 'danger',
+    });
 
-    if (!confirmed) return;
+    if (!confirmed || this.busy()) return;
 
     this.error.set('');
     this.success.set('');
@@ -327,7 +332,7 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  protected reserve(schedule: Schedule): void {
+  protected async reserve(schedule: Schedule): Promise<void> {
     if (
       this.busy() ||
       schedule.status !== 'AVAILABLE' ||
@@ -336,13 +341,15 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    const confirmed = window.confirm(
-      `¿Reservar ${schedule.fieldName} ` +
-      `el ${this.formatDate(schedule.date)} ` +
-      `de ${schedule.startTime} a ${schedule.endTime}?`
-    );
+    const confirmed = await this.confirmDialog.ask({
+      title: 'Confirmar reserva',
+      message: 'Vas a reservar este horario:',
+      details: this.detailsOf(schedule),
+      confirmLabel: 'Reservar',
+      cancelLabel: 'Volver',
+    });
 
-    if (!confirmed) return;
+    if (!confirmed || this.busy()) return;
 
     this.error.set('');
     this.success.set('');
@@ -376,6 +383,14 @@ export class HomeComponent implements OnInit {
           );
         },
       });
+  }
+
+  private detailsOf(schedule: Schedule): { label: string; value: string }[] {
+    return [
+      { label: 'Cancha', value: schedule.fieldName || '—' },
+      { label: 'Fecha', value: this.formatDate(schedule.date) },
+      { label: 'Horario', value: `${schedule.startTime} a ${schedule.endTime}` },
+    ];
   }
 
   private formatDate(value: string): string {

@@ -13,6 +13,16 @@ const adminGuard: CanActivateFn = () => {
     : router.createUrlTree(['/']);
 };
 
+// "Mis reservas" es solo para clientes: el administrador vuelve al inicio
+const clientGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+
+  return auth.session()?.role === 'ADMIN'
+    ? router.createUrlTree(['/'])
+    : true;
+};
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -42,6 +52,7 @@ export const routes: Routes = [
       },
       {
         path: 'reservas',
+        canActivate: [clientGuard],
         loadComponent: () =>
           import('./pages/bookings.component').then(
             (m) => m.BookingsComponent
